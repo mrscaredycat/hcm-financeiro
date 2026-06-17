@@ -2,7 +2,7 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 
   --color-green-50: #EFFDF5;
   --color-green-100: #D9FBE8;
@@ -16,11 +16,30 @@
   --color-green-900: #0A5331;
   --color-green-950: #052E16;
 
-  --color-hcmLaranja-500: #FF9A00;
-  --color-hcmAzul-600: #1a56db;
+  /* Modern Corporate Colors */
+  --color-hcmLaranja-500: #f97316;
+  --color-hcmAzul-600: #2563eb;
 }
 
-h1 {
-  font-family: 'Krona One', sans-serif;
-  color: var(--color-hcmLaranja-500);
+body {
+  font-family: var(--font-sans);
+  background-color: #f8fafc;
+  color: #0f172a;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom modern scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
