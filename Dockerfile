@@ -32,7 +32,9 @@ RUN npm install
 COPY . .
 
 # Build do Nuxt
-RUN npm run build
+RUN npm run build && \
+    mkdir -p .output/server/node_modules/oracledb && \
+    cp -r node_modules/oracledb/build .output/server/node_modules/oracledb/build || true
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 EXPOSE 3000
