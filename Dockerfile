@@ -20,22 +20,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && echo /opt/oracle/instantclient > /etc/ld.so.conf.d/oracle-instantclient.conf \
     && ldconfig
 
-# ── pnpm ─────────────────────────────────────────────────────────────────────
-RUN corepack enable && corepack prepare pnpm@latest --activate
-
 WORKDIR /app
 
 # Copia os arquivos de dependência primeiro (para aproveitar o cache do Docker)
-COPY package.json pnpm-lock.yaml ./
+COPY package.json package-lock.json ./
 
 # Instala as dependências
-RUN pnpm install --frozen-lockfile
+RUN npm ci
 
 # Copia o resto do projeto
 COPY . .
 
 # Build do Nuxt
-RUN pnpm run build
+RUN npm run build
 
 # ── Runtime ───────────────────────────────────────────────────────────────────
 EXPOSE 3000
