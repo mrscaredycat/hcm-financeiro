@@ -1,6 +1,6 @@
-# node:20-slim (Debian slim com glibc) — necessário para o Oracle Instant Client.
+# node:22-slim (Debian slim com glibc) — necessário para o Oracle Instant Client.
 # Alpine usa musl libc e não é compatível com as libs nativas da Oracle.
-FROM node:20-slim
+FROM node:22-slim
 
 # ── Oracle Instant Client 21 ─────────────────────────────────────────────────
 # Instala dependência de runtime (libaio) e ferramentas de download/extração.
