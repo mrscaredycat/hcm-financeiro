@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libaio1 \
         wget \
         unzip \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
     && wget -q https://download.oracle.com/otn_software/linux/instantclient/2115000/instantclient-basic-linux.x64-21.15.0.0.0dbru.zip \
     && unzip instantclient-basic-linux.x64-21.15.0.0.0dbru.zip \
