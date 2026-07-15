@@ -66,6 +66,11 @@ export default defineNuxtConfig({
     externalApiUser: process.env.EXTERNAL_API_USER,
     externalApiPassword: process.env.EXTERNAL_API_PASSWORD,
 
+    // Oracle Database (Mega ERP direto via oracledb)
+    megaDbUser: process.env.MEGA_DB_USER,
+    megaDbPassword: process.env.MEGA_DB_PASSWORD,
+    megaDbConnectionString: process.env.MEGA_DB_CONNECTION_STRING,
+
     // Public client-side vars
     public: {
       APP_VERSION: getPackageVersion(),
