@@ -273,85 +273,60 @@
             class="mb-4"
           />
 
-          <!-- Tabela ficha financeira -->
-          <UCard v-if="!loadingFicha && fichaFinanceira.length > 0" class="shadow-sm border-slate-200/60 rounded-xl overflow-hidden">
-            <template #header>
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <UIcon name="i-lucide-table" class="text-orange-500" />
-                  <span class="font-semibold text-gray-700">Ficha Financeira – {{ anoFicha }}</span>
+          <!-- Resumo Financeiro (Cards) -->
+          <div v-if="!loadingFicha && fichaFinanceira.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- Entradas do Mês -->
+            <UCard class="bg-emerald-50/50 border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-emerald-600 mb-2">
+                  <UIcon name="i-lucide-arrow-down-to-line" class="w-5 h-5" />
+                  <span class="text-sm font-semibold uppercase tracking-wider">Entradas do Mês</span>
                 </div>
-                <UButton
-                  variant="outline"
-                  icon="i-lucide-download"
-                  label="Exportar CSV"
-                  size="sm"
-                  @click="exportarFichaCSV"
-                />
+                <div class="text-2xl font-bold text-slate-800">
+                  {{ formatCurrency(Number(fichaFinanceira[0].ENTRADAS_MES ?? 0)) }}
+                </div>
               </div>
-            </template>
+            </UCard>
 
-            <div class="overflow-x-auto">
-              <table class="w-full text-sm">
-                <thead>
-                  <tr class="border-b-2 border-orange-200 bg-orange-50/60">
-                    <th class="text-left px-4 py-3 font-bold text-gray-700 text-sm">Período</th>
-                    <th class="text-right px-4 py-3 font-bold text-green-700 text-sm">Entradas</th>
-                    <th class="text-right px-4 py-3 font-bold text-red-600 text-sm">Saídas</th>
-                    <th class="text-right px-4 py-3 font-bold text-blue-700 text-sm">Saldo do Mês</th>
-                    <th class="text-right px-4 py-3 font-bold text-gray-800 text-sm">Saldo Atual</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <!-- Linha Anterior -->
-                  <tr
-                    v-for="row in fichaFinanceira"
-                    :key="row.periodo"
-                    class="border-b border-gray-100 transition-colors"
-                    :class="{
-                      'bg-gray-100/80 font-semibold text-gray-600': row.periodo === 'Anterior',
-                      'hover:bg-orange-50/50': row.periodo !== 'Anterior',
-                      'bg-blue-50/30': row.isAtual
-                    }"
-                  >
-                    <td class="px-4 py-3 capitalize font-medium" :class="row.periodo === 'Anterior' ? 'text-gray-500 text-xs uppercase tracking-wide' : 'text-gray-700'">
-                      {{ row.periodoLabel ?? row.periodo }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono" :class="Number(row.entradas) > 0 ? 'text-green-700 font-semibold' : 'text-gray-400'">
-                      {{ formatCurrency(Number(row.entradas ?? 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono" :class="Number(row.saidas) > 0 ? 'text-red-600 font-semibold' : 'text-gray-400'">
-                      {{ formatCurrency(Number(row.saidas ?? 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-semibold" :class="Number(row.saldoMes) >= 0 ? 'text-blue-700' : 'text-red-600'">
-                      {{ formatCurrency(Number(row.saldoMes ?? 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-bold text-lg" :class="Number(row.saldoAtual) >= 0 ? 'text-gray-800' : 'text-red-700'">
-                      {{ formatCurrency(Number(row.saldoAtual ?? 0)) }}
-                    </td>
-                  </tr>
-                </tbody>
-                <!-- Totais -->
-                <tfoot>
-                  <tr class="border-t-2 border-orange-300 bg-orange-50/80">
-                    <td class="px-4 py-3 font-bold text-gray-700 text-sm uppercase tracking-wide">Total</td>
-                    <td class="px-4 py-3 text-right font-mono font-bold text-green-700">
-                      {{ formatCurrency(fichaFinanceira.filter(r => r.periodo !== 'Anterior').reduce((s, r) => s + Number(r.entradas ?? 0), 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-bold text-red-600">
-                      {{ formatCurrency(fichaFinanceira.filter(r => r.periodo !== 'Anterior').reduce((s, r) => s + Number(r.saidas ?? 0), 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-bold text-blue-700">
-                      {{ formatCurrency(fichaFinanceira.filter(r => r.periodo !== 'Anterior').reduce((s, r) => s + Number(r.saldoMes ?? 0), 0)) }}
-                    </td>
-                    <td class="px-4 py-3 text-right font-mono font-bold text-gray-800">
-                      {{ fichaFinanceira.length > 0 ? formatCurrency(Number(fichaFinanceira[fichaFinanceira.length - 1]?.saldoAtual ?? 0)) : '—' }}
-                    </td>
-                  </tr>
-                </tfoot>
-              </table>
-            </div>
-          </UCard>
+            <!-- Saídas do Mês -->
+            <UCard class="bg-rose-50/50 border-rose-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-rose-600 mb-2">
+                  <UIcon name="i-lucide-arrow-up-from-line" class="w-5 h-5" />
+                  <span class="text-sm font-semibold uppercase tracking-wider">Saídas do Mês</span>
+                </div>
+                <div class="text-2xl font-bold text-slate-800">
+                  {{ formatCurrency(Number(fichaFinanceira[0].SAIDAS_MES ?? 0)) }}
+                </div>
+              </div>
+            </UCard>
+
+            <!-- Saldo do Mês -->
+            <UCard class="bg-blue-50/50 border-blue-100 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-blue-600 mb-2">
+                  <UIcon name="i-lucide-calculator" class="w-5 h-5" />
+                  <span class="text-sm font-semibold uppercase tracking-wider">Saldo do Mês</span>
+                </div>
+                <div class="text-2xl font-bold" :class="Number(fichaFinanceira[0].SALDO_MES) >= 0 ? 'text-blue-700' : 'text-rose-600'">
+                  {{ formatCurrency(Number(fichaFinanceira[0].SALDO_MES ?? 0)) }}
+                </div>
+              </div>
+            </UCard>
+
+            <!-- Saldo Atual (Histórico) -->
+            <UCard class="bg-slate-50 border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+              <div class="flex flex-col gap-1">
+                <div class="flex items-center gap-2 text-slate-600 mb-2">
+                  <UIcon name="i-lucide-landmark" class="w-5 h-5" />
+                  <span class="text-sm font-semibold uppercase tracking-wider">Saldo Atual (Geral)</span>
+                </div>
+                <div class="text-2xl font-extrabold" :class="Number(fichaFinanceira[0].SALDO_ATUAL) >= 0 ? 'text-slate-900' : 'text-rose-700'">
+                  {{ formatCurrency(Number(fichaFinanceira[0].SALDO_ATUAL ?? 0)) }}
+                </div>
+              </div>
+            </UCard>
+          </div>
 
           <!-- Empty state ficha -->
           <div
@@ -577,47 +552,32 @@ async function buscarFicha() {
 
   try {
     const data = await $fetch<any>(
-      `/api/financeiro/ficha?codAgente=${cod}&filial=100&ano=${anoFicha.value}`
+      `/api/financeiro/saldo?agenteId=${cod}`
     )
 
     if (data?.error || data?.success === false) {
-      erroFicha.value = data.error ?? 'Erro ao carregar ficha financeira.'
+      erroFicha.value = data.error ?? 'Erro ao carregar saldos.'
       loadingFicha.value = false
       fichaCarregada.value = true
       return
     }
 
-    // Normaliza os dados retornados pelo Mega para o formato periódico
-    fichaFinanceira.value = normalizarFicha(data)
+    // A nova API retorna um array em data.data
+    const rows = data?.data || []
+    if (rows.length > 0) {
+       fichaFinanceira.value = [rows[0]]
+    } else {
+       fichaFinanceira.value = []
+    }
+    
     fichaCarregada.value = true
   } catch (e: any) {
-    console.error('Erro ficha financeira:', e)
-    erroFicha.value = e.message ?? 'Erro desconhecido ao carregar a ficha financeira.'
+    console.error('Erro saldos financeiros:', e)
+    erroFicha.value = e.message ?? 'Erro desconhecido ao carregar saldos.'
     fichaCarregada.value = true
   }
 
   loadingFicha.value = false
-}
-
-function normalizarFicha(data: any): any[] {
-  // A API retorna array pré-normalizado com {mes, periodo, periodoLabel, entradas, saidas, saldoMes, saldoAtual}
-  if (Array.isArray(data)) {
-    const mesAtual = new Date().getMonth() + 1
-    const anoSelecionado = parseInt(anoFicha.value)
-    const anoAtual = new Date().getFullYear()
-    return data.map(row => ({
-      ...row,
-      isAtual: anoSelecionado === anoAtual && row.mes === mesAtual
-    }))
-  }
-
-  // Fallback: objeto com value/items/data
-  const arr = data?.value ?? data?.items ?? data?.data ?? data?.result
-  if (Array.isArray(arr)) {
-    return normalizarFicha(arr)
-  }
-
-  return []
 }
 
 // =====================

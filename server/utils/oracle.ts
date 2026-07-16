@@ -13,10 +13,32 @@ let thickInitialized = false
 
 function ensureThickMode() {
   if (thickInitialized) return
-  const libDir = process.env.ORACLE_LIB_DIR ?? '/opt/oracle/instantclient'
-  oracledb.initOracleClient({ libDir })
-  thickInitialized = true
-  console.log(`[Oracle] Modo thick ativado. Instant Client: ${libDir}`)
+
+  try {
+    const isWindows = process.platform === 'win32'
+    
+    if (isWindows) {
+      // No Windows, permite usar o caminho configurado no .env (ex: C:\oracle) ou tenta o PATH nativo
+      const winLibDir = process.env.ORACLE_LIB_DIR_WIN
+      if (winLibDir) {
+        oracledb.initOracleClient({ libDir: winLibDir })
+        console.log(`[Oracle] Modo thick ativado no Windows (Instant Client: ${winLibDir})`)
+      } else {
+        oracledb.initOracleClient()
+        console.log(`[Oracle] Modo thick ativado no Windows (usando PATH nativo).`)
+      }
+    } else {
+      // No Docker/Linux, usa a pasta do container
+      const libDir = process.env.ORACLE_LIB_DIR ?? '/opt/oracle/instantclient'
+      oracledb.initOracleClient({ libDir })
+      console.log(`[Oracle] Modo thick ativado. Instant Client: ${libDir}`)
+    }
+    
+    thickInitialized = true
+  } catch (err) {
+    console.warn(`[Oracle] Erro ao iniciar Oracle Client. Continuando em modo Thin (pode falhar com NJS-116)...`, err)
+    thickInitialized = true // para não tentar de novo
+  }
 }
 
 /**
