@@ -1,15 +1,17 @@
 <template>
   <UContainer class="max-w-7xl animate-in fade-in duration-500">
-    
     <!-- Hero / Title Section -->
     <div class="mb-10 relative bg-white border border-slate-200/60 shadow-sm rounded-2xl p-8 overflow-hidden">
       <!-- Subtle background decoration -->
-      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-50 to-transparent pointer-events-none opacity-50"></div>
-      
+      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-50 to-transparent pointer-events-none opacity-50" />
+
       <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div>
           <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 text-orange-700 text-xs font-bold mb-3 uppercase tracking-wider">
-            <UIcon name="i-lucide-pie-chart" class="w-3.5 h-3.5" />
+            <UIcon
+              name="i-lucide-pie-chart"
+              class="w-3.5 h-3.5"
+            />
             Módulo Financeiro
           </div>
           <h1 class="text-3xl md:text-4xl font-extrabold mb-2 text-slate-900 tracking-tight">
@@ -19,7 +21,7 @@
             Gerencie e consulte saldos, entradas e saídas de agentes integrados ao Mega ERP de forma rápida e segura.
           </p>
         </div>
-        
+
         <!-- Action Buttons -->
         <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
           <UButton
@@ -56,9 +58,17 @@
     />
 
     <!-- ===== LOADING AGENTES ===== -->
-    <div v-if="loadingAgentes" class="flex flex-col items-center justify-center py-16 gap-4">
-      <UIcon name="i-lucide-loader-circle" class="text-orange-500 animate-spin h-10 w-10" />
-      <p class="text-gray-500 text-sm">Buscando bancos e contas financeiras...</p>
+    <div
+      v-if="loadingAgentes"
+      class="flex flex-col items-center justify-center py-16 gap-4"
+    >
+      <UIcon
+        name="i-lucide-loader-circle"
+        class="text-orange-500 animate-spin h-10 w-10"
+      />
+      <p class="text-gray-500 text-sm">
+        Buscando bancos e contas financeiras...
+      </p>
     </div>
 
     <!-- ===== CONTEÚDO PRINCIPAL (tabs) ===== -->
@@ -70,9 +80,17 @@
           :class="abaAtiva === 'agentes' ? 'tab-btn--ativa' : ''"
           @click="abaAtiva = 'agentes'"
         >
-          <UIcon name="i-lucide-users" class="h-4 w-4" />
+          <UIcon
+            name="i-lucide-users"
+            class="h-4 w-4"
+          />
           Agentes
-          <UBadge :label="String(agentesFiltrados.length)" color="warning" variant="soft" size="xs" />
+          <UBadge
+            :label="String(agentesFiltrados.length)"
+            color="warning"
+            variant="soft"
+            size="xs"
+          />
         </button>
         <button
           class="tab-btn"
@@ -80,9 +98,15 @@
           :disabled="!agenteSelecionado"
           @click="abaAtiva = 'ficha'"
         >
-          <UIcon name="i-lucide-bar-chart-horizontal" class="h-4 w-4" />
+          <UIcon
+            name="i-lucide-bar-chart-horizontal"
+            class="h-4 w-4"
+          />
           Ficha Financeira
-          <span v-if="!agenteSelecionado" class="text-xs text-gray-400 font-normal ml-1">(selecione um agente)</span>
+          <span
+            v-if="!agenteSelecionado"
+            class="text-xs text-gray-400 font-normal ml-1"
+          >(selecione um agente)</span>
         </button>
       </div>
 
@@ -122,7 +146,9 @@
                       />
                     </div>
                   </th>
-                  <th class="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-700 text-center">Ação</th>
+                  <th class="px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-700 text-center">
+                    Ação
+                  </th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-100">
@@ -133,11 +159,19 @@
                   :class="{ 'bg-orange-50/50 ring-1 ring-inset ring-orange-200': agenteSelecionado?._uid === ag._uid }"
                   @click="selecionarAgente(ag)"
                 >
-                  <td class="px-4 py-3 font-mono text-xs text-slate-500 font-medium">{{ ag.Codigo ?? ag.codigo ?? '—' }}</td>
-                  <td class="px-4 py-3 text-slate-900 font-semibold max-w-[200px] truncate" :title="ag.NomeFantasia ?? ag.nomeFantasia">
+                  <td class="px-4 py-3 font-mono text-xs text-slate-500 font-medium">
+                    {{ ag.Codigo ?? ag.codigo ?? '—' }}
+                  </td>
+                  <td
+                    class="px-4 py-3 text-slate-900 font-semibold max-w-[200px] truncate"
+                    :title="ag.NomeFantasia ?? ag.nomeFantasia"
+                  >
                     {{ ag.NomeFantasia ?? ag.nomeFantasia ?? ag.RazaoSocial ?? ag.razaoSocial ?? '—' }}
                   </td>
-                  <td class="px-4 py-3 text-slate-600 max-w-[200px] truncate" :title="ag.RazaoSocial ?? ag.razaoSocial">
+                  <td
+                    class="px-4 py-3 text-slate-600 max-w-[200px] truncate"
+                    :title="ag.RazaoSocial ?? ag.razaoSocial"
+                  >
                     {{ ag.RazaoSocial ?? ag.razaoSocial ?? '—' }}
                   </td>
                   <td class="px-4 py-3">
@@ -158,8 +192,13 @@
                       class="font-bold"
                     />
                   </td>
-                  <td class="px-4 py-3 text-slate-500 text-xs font-medium">{{ ag.UF ?? ag.uf ?? '—' }}</td>
-                  <td class="px-4 py-3 text-slate-600 max-w-[140px] truncate" :title="getMunicipio(ag)">
+                  <td class="px-4 py-3 text-slate-500 text-xs font-medium">
+                    {{ ag.UF ?? ag.uf ?? '—' }}
+                  </td>
+                  <td
+                    class="px-4 py-3 text-slate-600 max-w-[140px] truncate"
+                    :title="getMunicipio(ag)"
+                  >
                     {{ getMunicipio(ag) }}
                   </td>
                   <td class="px-4 py-3 text-center">
@@ -175,7 +214,10 @@
                   </td>
                 </tr>
                 <tr v-if="agentesPaginados.length === 0">
-                  <td colspan="9" class="px-3 py-10 text-center text-gray-400">
+                  <td
+                    colspan="9"
+                    class="px-3 py-10 text-center text-gray-400"
+                  >
                     Nenhum agente encontrado.
                   </td>
                 </tr>
@@ -206,10 +248,15 @@
             <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <div class="flex items-center gap-4">
                 <div class="p-3 bg-white border border-slate-200 rounded-lg shadow-sm hidden sm:block">
-                  <UIcon name="i-lucide-building-2" class="w-6 h-6 text-slate-400" />
+                  <UIcon
+                    name="i-lucide-building-2"
+                    class="w-6 h-6 text-slate-400"
+                  />
                 </div>
                 <div>
-                  <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">Agente Selecionado</p>
+                  <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">
+                    Agente Selecionado
+                  </p>
                   <h2 class="text-xl font-extrabold text-slate-900 leading-none mb-1">
                     {{ agenteSelecionado.NomeFantasia ?? agenteSelecionado.nomeFantasia ?? agenteSelecionado.RazaoSocial ?? '—' }}
                   </h2>
@@ -220,7 +267,7 @@
                   </p>
                 </div>
               </div>
-              
+
               <div class="flex items-center gap-3 bg-white p-2 rounded-lg border border-slate-200 shadow-sm w-full md:w-auto">
                 <div class="flex items-center gap-2">
                   <label class="text-xs text-slate-500 font-bold uppercase tracking-wider ml-2">Ano</label>
@@ -234,7 +281,7 @@
                     color="gray"
                   />
                 </div>
-                <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
+                <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
                 <UButton
                   :loading="loadingFicha"
                   color="orange"
@@ -258,9 +305,17 @@
           </UCard>
 
           <!-- Loading ficha -->
-          <div v-if="loadingFicha" class="flex flex-col items-center justify-center py-12 gap-3">
-            <UIcon name="i-lucide-loader-circle" class="text-orange-500 animate-spin h-8 w-8" />
-            <p class="text-gray-500 text-sm">Carregando ficha financeira...</p>
+          <div
+            v-if="loadingFicha"
+            class="flex flex-col items-center justify-center py-12 gap-3"
+          >
+            <UIcon
+              name="i-lucide-loader-circle"
+              class="text-orange-500 animate-spin h-8 w-8"
+            />
+            <p class="text-gray-500 text-sm">
+              Carregando ficha financeira...
+            </p>
           </div>
 
           <!-- Erro ficha -->
@@ -274,12 +329,18 @@
           />
 
           <!-- Resumo Financeiro (Cards) -->
-          <div v-if="!loadingFicha && fichaFinanceira.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div
+            v-if="!loadingFicha && fichaFinanceira.length > 0"
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          >
             <!-- Entradas do Mês -->
             <UCard class="bg-emerald-50/50 border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-2 text-emerald-600 mb-2">
-                  <UIcon name="i-lucide-arrow-down-to-line" class="w-5 h-5" />
+                  <UIcon
+                    name="i-lucide-arrow-down-to-line"
+                    class="w-5 h-5"
+                  />
                   <span class="text-sm font-semibold uppercase tracking-wider">Entradas do Mês</span>
                 </div>
                 <div class="text-2xl font-bold text-slate-800">
@@ -292,7 +353,10 @@
             <UCard class="bg-rose-50/50 border-rose-100 shadow-sm hover:shadow-md transition-shadow">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-2 text-rose-600 mb-2">
-                  <UIcon name="i-lucide-arrow-up-from-line" class="w-5 h-5" />
+                  <UIcon
+                    name="i-lucide-arrow-up-from-line"
+                    class="w-5 h-5"
+                  />
                   <span class="text-sm font-semibold uppercase tracking-wider">Saídas do Mês</span>
                 </div>
                 <div class="text-2xl font-bold text-slate-800">
@@ -305,10 +369,16 @@
             <UCard class="bg-blue-50/50 border-blue-100 shadow-sm hover:shadow-md transition-shadow">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-2 text-blue-600 mb-2">
-                  <UIcon name="i-lucide-calculator" class="w-5 h-5" />
+                  <UIcon
+                    name="i-lucide-calculator"
+                    class="w-5 h-5"
+                  />
                   <span class="text-sm font-semibold uppercase tracking-wider">Saldo do Mês</span>
                 </div>
-                <div class="text-2xl font-bold" :class="Number(fichaFinanceira[0].SALDO_MES) >= 0 ? 'text-blue-700' : 'text-rose-600'">
+                <div
+                  class="text-2xl font-bold"
+                  :class="Number(fichaFinanceira[0].SALDO_MES) >= 0 ? 'text-blue-700' : 'text-rose-600'"
+                >
                   {{ formatCurrency(Number(fichaFinanceira[0].SALDO_MES ?? 0)) }}
                 </div>
               </div>
@@ -318,10 +388,16 @@
             <UCard class="bg-slate-50 border-slate-200 shadow-sm hover:shadow-md transition-shadow">
               <div class="flex flex-col gap-1">
                 <div class="flex items-center gap-2 text-slate-600 mb-2">
-                  <UIcon name="i-lucide-landmark" class="w-5 h-5" />
+                  <UIcon
+                    name="i-lucide-landmark"
+                    class="w-5 h-5"
+                  />
                   <span class="text-sm font-semibold uppercase tracking-wider">Saldo Atual (Geral)</span>
                 </div>
-                <div class="text-2xl font-extrabold" :class="Number(fichaFinanceira[0].SALDO_ATUAL) >= 0 ? 'text-slate-900' : 'text-rose-700'">
+                <div
+                  class="text-2xl font-extrabold"
+                  :class="Number(fichaFinanceira[0].SALDO_ATUAL) >= 0 ? 'text-slate-900' : 'text-rose-700'"
+                >
                   {{ formatCurrency(Number(fichaFinanceira[0].SALDO_ATUAL ?? 0)) }}
                 </div>
               </div>
@@ -333,9 +409,16 @@
             v-if="!loadingFicha && !erroFicha && fichaFinanceira.length === 0 && fichaCarregada"
             class="flex flex-col items-center justify-center py-16 text-center"
           >
-            <UIcon name="i-lucide-inbox" class="h-12 w-12 text-gray-200 mb-3" />
-            <p class="text-gray-500 font-medium">Nenhum dado encontrado para este agente no período</p>
-            <p class="text-gray-400 text-sm mt-1">Tente outro ano ou verifique se o agente possui movimentação.</p>
+            <UIcon
+              name="i-lucide-inbox"
+              class="h-12 w-12 text-gray-200 mb-3"
+            />
+            <p class="text-gray-500 font-medium">
+              Nenhum dado encontrado para este agente no período
+            </p>
+            <p class="text-gray-400 text-sm mt-1">
+              Tente outro ano ou verifique se o agente possui movimentação.
+            </p>
           </div>
 
           <!-- Prompt inicial ficha -->
@@ -343,18 +426,42 @@
             v-if="!loadingFicha && !fichaCarregada"
             class="flex flex-col items-center justify-center py-16 text-center"
           >
-            <UIcon name="i-lucide-bar-chart-horizontal" class="h-12 w-12 text-orange-200 mb-3" />
-            <p class="text-gray-500 font-medium">Clique em <strong>Carregar</strong> para buscar a ficha financeira</p>
-            <p class="text-gray-400 text-sm mt-1">Selecione o ano desejado e clique no botão acima.</p>
+            <UIcon
+              name="i-lucide-bar-chart-horizontal"
+              class="h-12 w-12 text-orange-200 mb-3"
+            />
+            <p class="text-gray-500 font-medium">
+              Clique em <strong>Carregar</strong> para buscar a ficha financeira
+            </p>
+            <p class="text-gray-400 text-sm mt-1">
+              Selecione o ano desejado e clique no botão acima.
+            </p>
           </div>
         </template>
 
         <!-- Nenhum agente selecionado -->
-        <div v-else class="flex flex-col items-center justify-center py-20 text-center">
-          <UIcon name="i-lucide-user-search" class="h-14 w-14 text-orange-200 mb-4" />
-          <p class="text-gray-500 font-medium">Nenhum agente selecionado</p>
-          <p class="text-gray-400 text-sm mt-1">Vá para a aba <strong>Agentes</strong> e clique em <strong>Ficha</strong> em um agente.</p>
-          <UButton class="mt-4" variant="soft" color="warning" icon="i-lucide-users" label="Ver Agentes" @click="abaAtiva = 'agentes'" />
+        <div
+          v-else
+          class="flex flex-col items-center justify-center py-20 text-center"
+        >
+          <UIcon
+            name="i-lucide-user-search"
+            class="h-14 w-14 text-orange-200 mb-4"
+          />
+          <p class="text-gray-500 font-medium">
+            Nenhum agente selecionado
+          </p>
+          <p class="text-gray-400 text-sm mt-1">
+            Vá para a aba <strong>Agentes</strong> e clique em <strong>Ficha</strong> em um agente.
+          </p>
+          <UButton
+            class="mt-4"
+            variant="soft"
+            color="warning"
+            icon="i-lucide-users"
+            label="Ver Agentes"
+            @click="abaAtiva = 'agentes'"
+          />
         </div>
       </template>
     </template>
@@ -363,9 +470,16 @@
       v-if="!loadingAgentes && !erroAgentes && agentes.length === 0"
       class="flex flex-col items-center justify-center py-20 text-center"
     >
-      <UIcon name="i-lucide-users" class="h-16 w-16 text-orange-200 mb-4" />
-      <p class="text-gray-500 font-medium">Nenhuma consulta realizada ainda</p>
-      <p class="text-gray-400 text-sm mt-1">Clique em <strong>Buscar Bancos</strong> para iniciar</p>
+      <UIcon
+        name="i-lucide-users"
+        class="h-16 w-16 text-orange-200 mb-4"
+      />
+      <p class="text-gray-500 font-medium">
+        Nenhuma consulta realizada ainda
+      </p>
+      <p class="text-gray-400 text-sm mt-1">
+        Clique em <strong>Buscar Bancos</strong> para iniciar
+      </p>
     </div>
   </UContainer>
 </template>
@@ -476,7 +590,7 @@ async function buscarAgentes() {
         ...ag,
         _uid: ag.Codigo ?? ag.codigo ?? Math.random()
       }))
-      
+
       // Salva no cache!
       try {
         localStorage.setItem('hcm_agentes_cache', JSON.stringify(agentes.value))
@@ -502,7 +616,7 @@ function limparTudo() {
   abaAtiva.value = 'agentes'
   try {
     localStorage.removeItem('hcm_agentes_cache')
-  } catch(e) {}
+  } catch (e) {}
 }
 
 // =====================
@@ -565,11 +679,11 @@ async function buscarFicha() {
     // A nova API retorna um array em data.data
     const rows = data?.data || []
     if (rows.length > 0) {
-       fichaFinanceira.value = [rows[0]]
+      fichaFinanceira.value = [rows[0]]
     } else {
-       fichaFinanceira.value = []
+      fichaFinanceira.value = []
     }
-    
+
     fichaCarregada.value = true
   } catch (e: any) {
     console.error('Erro saldos financeiros:', e)

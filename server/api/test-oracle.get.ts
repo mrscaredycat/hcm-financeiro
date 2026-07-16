@@ -21,7 +21,7 @@ export default defineEventHandler(async () => {
       variaveis: {
         MEGA_DB_USER: user ? '✅ definido' : '❌ ausente',
         MEGA_DB_PASSWORD: password ? '✅ definido' : '❌ ausente',
-        MEGA_DB_CONNECTION_STRING: connectString ? '✅ definido' : '❌ ausente',
+        MEGA_DB_CONNECTION_STRING: connectString ? '✅ definido' : '❌ ausente'
       }
     }
   }

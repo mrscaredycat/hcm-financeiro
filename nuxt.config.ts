@@ -26,22 +26,6 @@ export default defineNuxtConfig({
     'nuxt-vuefire'
   ],
 
-  vuefire: {
-    auth: {
-      enabled: true,
-      sessionCookie: true
-    },
-    config: {
-      apiKey: process.env.FIREBASE_API_KEY,
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-      appId: process.env.FIREBASE_APP_ID,
-      measurementId: process.env.FIREBASE_MEASUREMENT_ID
-    }
-  },
-
   devtools: {
     enabled: true
   },
@@ -82,17 +66,23 @@ export default defineNuxtConfig({
     }
   },
 
-  nitro: {
-    preset: process.env.NITRO_PRESET ?? 'node-server',
-    watchOptions: {
+  routeRules: {
+    '/**': { ssr: false }
+  },
+
+  watchers: {
+    chokidar: {
       usePolling: true,
       interval: 1500,
       ignored: ['**/.git/**', '**/node_modules/**', '**/.output/**']
     }
   },
 
-  watchers: {
-    chokidar: {
+  compatibilityDate: '2025-01-15',
+
+  nitro: {
+    preset: process.env.NITRO_PRESET ?? 'node-server',
+    watchOptions: {
       usePolling: true,
       interval: 1500,
       ignored: ['**/.git/**', '**/node_modules/**', '**/.output/**']
@@ -109,18 +99,28 @@ export default defineNuxtConfig({
     }
   },
 
-  routeRules: {
-    '/**': { ssr: false }
-  },
-
-  compatibilityDate: '2025-01-15',
-
   eslint: {
     config: {
       stylistic: {
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
+    }
+  },
+
+  vuefire: {
+    auth: {
+      enabled: true,
+      sessionCookie: true
+    },
+    config: {
+      apiKey: process.env.FIREBASE_API_KEY,
+      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+      appId: process.env.FIREBASE_APP_ID,
+      measurementId: process.env.FIREBASE_MEASUREMENT_ID
     }
   }
 })

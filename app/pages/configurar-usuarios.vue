@@ -2,17 +2,33 @@
   <section class="max-w-4xl mx-auto py-10 px-5 animate-in fade-in duration-500">
     <div class="mb-8">
       <div class="flex items-center gap-2 mb-2">
-        <UButton variant="ghost" icon="i-lucide-arrow-left" color="gray" to="/" size="sm" class="-ml-2" />
-        <h1 class="text-2xl font-bold text-slate-900">Configurar Usuários Autorizados</h1>
+        <UButton
+          variant="ghost"
+          icon="i-lucide-arrow-left"
+          color="gray"
+          to="/"
+          size="sm"
+          class="-ml-2"
+        />
+        <h1 class="text-2xl font-bold text-slate-900">
+          Configurar Usuários Autorizados
+        </h1>
       </div>
-      <p class="text-slate-500">Cadastre os e-mails que terão permissão para acessar o módulo financeiro.</p>
+      <p class="text-slate-500">
+        Cadastre os e-mails que terão permissão para acessar o módulo financeiro.
+      </p>
     </div>
 
     <!-- Novo Usuário -->
     <UCard class="mb-8 border-slate-200/60 shadow-sm">
-      <h2 class="text-lg font-bold text-slate-800 mb-4">Autorizar Novo E-mail</h2>
-      
-      <form @submit.prevent="adicionarUsuario(false)" class="flex flex-col sm:flex-row gap-3">
+      <h2 class="text-lg font-bold text-slate-800 mb-4">
+        Autorizar Novo E-mail
+      </h2>
+
+      <form
+        class="flex flex-col sm:flex-row gap-3"
+        @submit.prevent="adicionarUsuario(false)"
+      >
         <UInput
           v-model="novoEmail"
           type="email"
@@ -58,29 +74,71 @@
     <!-- Lista -->
     <UCard class="border-slate-200/60 shadow-sm bg-white">
       <div class="flex items-center justify-between mb-4">
-        <h2 class="text-lg font-bold text-slate-800">E-mails Autorizados</h2>
-        <UButton icon="i-lucide-refresh-cw" color="gray" variant="ghost" size="xs" @click="carregarUsuarios" :loading="carregandoLista" />
+        <h2 class="text-lg font-bold text-slate-800">
+          E-mails Autorizados
+        </h2>
+        <UButton
+          icon="i-lucide-refresh-cw"
+          color="gray"
+          variant="ghost"
+          size="xs"
+          :loading="carregandoLista"
+          @click="carregarUsuarios"
+        />
       </div>
 
-      <div v-if="carregandoLista" class="text-slate-500 text-center py-6">Carregando lista...</div>
-      
-      <div v-else-if="erroLista" class="text-red-500 text-center py-6 font-medium">
+      <div
+        v-if="carregandoLista"
+        class="text-slate-500 text-center py-6"
+      >
+        Carregando lista...
+      </div>
+
+      <div
+        v-else-if="erroLista"
+        class="text-red-500 text-center py-6 font-medium"
+      >
         {{ erroLista }}
       </div>
 
-      <table v-else-if="usuariosAutorizados.length > 0" class="w-full text-left border-collapse">
+      <table
+        v-else-if="usuariosAutorizados.length > 0"
+        class="w-full text-left border-collapse"
+      >
         <thead>
           <tr class="border-b border-slate-200">
-            <th class="py-3 px-2 text-slate-600 font-semibold text-sm">E-mail</th>
-            <th class="py-3 px-2 text-slate-600 font-semibold text-sm w-24 text-right">Ações</th>
+            <th class="py-3 px-2 text-slate-600 font-semibold text-sm">
+              E-mail
+            </th>
+            <th class="py-3 px-2 text-slate-600 font-semibold text-sm w-24 text-right">
+              Ações
+            </th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="u in usuariosAutorizados" :key="u.id" class="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+          <tr
+            v-for="u in usuariosAutorizados"
+            :key="u.id"
+            class="border-b border-slate-100 hover:bg-slate-50 transition-colors"
+          >
             <td class="py-3 px-2 font-medium text-slate-800 text-sm flex items-center gap-2">
               {{ u.email }}
-              <UBadge v-if="u.isMaster" color="indigo" variant="subtle" size="xs">Master</UBadge>
-              <UBadge v-if="u.isAbsoluteMaster" color="orange" variant="solid" size="xs">Master Absoluto</UBadge>
+              <UBadge
+                v-if="u.isMaster"
+                color="indigo"
+                variant="subtle"
+                size="xs"
+              >
+                Master
+              </UBadge>
+              <UBadge
+                v-if="u.isAbsoluteMaster"
+                color="orange"
+                variant="solid"
+                size="xs"
+              >
+                Master Absoluto
+              </UBadge>
             </td>
             <td class="py-3 px-2 text-right">
               <UButton
@@ -98,7 +156,12 @@
         </tbody>
       </table>
 
-      <div v-else class="text-slate-500 text-center py-6">Nenhum e-mail autorizado ainda.</div>
+      <div
+        v-else
+        class="text-slate-500 text-center py-6"
+      >
+        Nenhum e-mail autorizado ainda.
+      </div>
     </UCard>
   </section>
 </template>
@@ -149,7 +212,7 @@ function carregarUsuarios() {
       collection(db, 'authorized_users'),
       (snapshot) => {
         const users = snapshot.docs.map(d => ({ id: d.id, ...d.data() }))
-        
+
         // Garantir que a master absoluta apareça sempre no topo, mesmo se não estiver no Firestore
         const hasAbsolute = users.some(u => u.email === absoluteMaster)
         if (!hasAbsolute) {
@@ -161,7 +224,7 @@ function carregarUsuarios() {
             users[absIndex].isMaster = true
           }
         }
-        
+
         usuariosAutorizados.value = users
         carregandoLista.value = false
       },
@@ -180,7 +243,7 @@ function carregarUsuarios() {
 async function adicionarUsuario(isMasterUser = false) {
   mensagem.value = ''
   const emailLower = novoEmail.value.toLowerCase().trim()
-  
+
   if (!emailLower) return
   if (!emailLower.endsWith('@gmail.com')) {
     mensagem.value = 'Apenas e-mails do Google (@gmail.com) são permitidos.'
@@ -204,7 +267,7 @@ async function adicionarUsuario(isMasterUser = false) {
       isMaster: isMasterUser,
       created_at: new Date()
     })
-    
+
     mensagem.value = isMasterUser ? `Master ${emailLower} salvo com sucesso!` : `Acesso liberado para ${emailLower}!`
     mensagemTipo.value = 'success'
     novoEmail.value = ''
@@ -225,7 +288,7 @@ async function removerUsuario(docId, userEmail) {
   }
 
   if (!confirm(`Tem certeza que deseja revogar o acesso de ${userEmail}?`)) return
-  
+
   try {
     await deleteDoc(doc(db, 'authorized_users', docId))
   } catch (error) {

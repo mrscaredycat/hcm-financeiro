@@ -1,12 +1,12 @@
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const cod = query.cod || '6253'
-  
+
   const { accessToken } = await $fetch('/api/auth/mega-login')
-  
+
   const epPagar = `/api/FinanceiroMovimentacao/FaturaPagar/Saldo/Agente/${cod}/2026-01-01T00:00:00/2026-12-31T23:59:59`
   const epReceber = `/api/FinanceiroMovimentacao/FaturaReceber/Saldo/Agente/${cod}/2026-01-01T00:00:00/2026-12-31T23:59:59`
-  
+
   try {
     const resPagar = await fetch(`https://rest.megaerp.online${epPagar}`, {
       headers: { Authorization: `Bearer ${accessToken}` }

@@ -1,8 +1,8 @@
 <template>
   <div class="min-h-screen flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
     <!-- Decorative blobs -->
-    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-400/20 rounded-full blur-3xl"></div>
-    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-400/20 rounded-full blur-3xl"></div>
+    <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-orange-400/20 rounded-full blur-3xl" />
+    <div class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-400/20 rounded-full blur-3xl" />
 
     <UCard class="w-full max-w-md relative z-10 shadow-xl border-slate-200/60 rounded-2xl overflow-hidden bg-white/90 backdrop-blur-sm">
       <div class="flex flex-col items-center justify-center mb-8 pt-4">
@@ -34,10 +34,13 @@
           class="font-bold tracking-wide shadow-md border border-slate-200 hover:bg-slate-50 flex items-center justify-center gap-3 text-slate-700"
           @click="fazerLoginGoogle"
         >
-          <UIcon name="i-simple-icons-google" class="w-5 h-5 text-red-500" />
+          <UIcon
+            name="i-simple-icons-google"
+            class="w-5 h-5 text-red-500"
+          />
           Entrar com o Google
         </UButton>
-        
+
         <p class="text-xs text-slate-400 text-center mt-4">
           O acesso é restrito apenas a contas autorizadas.
         </p>
@@ -66,10 +69,10 @@ const route = useRoute()
 async function fazerLoginGoogle() {
   erroLogin.value = ''
   carregando.value = true
-  
+
   try {
     if (!auth) throw new Error('Firebase Auth não inicializado.')
-    
+
     const provider = new GoogleAuthProvider()
     // Força a seleção de conta do Google
     provider.setCustomParameters({
@@ -79,7 +82,7 @@ async function fazerLoginGoogle() {
     const result = await signInWithPopup(auth, provider)
     const user = result.user
     const email = user.email?.toLowerCase() || ''
-    
+
     // Validação inicial: Apenas e-mails do Google
     if (!email.endsWith('@gmail.com')) {
       await auth.signOut()
@@ -107,7 +110,7 @@ async function fazerLoginGoogle() {
         return
       }
     }
-    
+
     // Sucesso no login, redireciona
     const redirectTo = route.query.redirect || '/'
     router.push(redirectTo)

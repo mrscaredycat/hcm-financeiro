@@ -1,15 +1,15 @@
-import { getMegaConnection } from '#imports';
-import oracledb from 'oracledb';
+import { getMegaConnection } from '#imports'
+import oracledb from 'oracledb'
 
 export default defineEventHandler(async (event) => {
-  let connection;
+  let connection
 
   try {
     // Pega o ID do agente (conta bancária) que vier da URL (ex: /api/financeiro/saldo?agenteId=1001)
-    const queryParams = getQuery(event);
-    const agenteId = queryParams.agenteId;
+    const queryParams = getQuery(event)
+    const agenteId = queryParams.agenteId
 
-    connection = await getMegaConnection();
+    connection = await getMegaConnection()
 
     // Query definitiva que junta Recebimentos (Entradas) e Pagamentos (Saídas)
     // Calcula os saldos totais (histórico completo) e do mês atual, agrupados por agente.
@@ -46,32 +46,31 @@ export default defineEventHandler(async (event) => {
       FULL OUTER JOIN saidas s ON e.AGN_IN_CODIGO = s.AGN_IN_CODIGO
       WHERE 1=1
         ${agenteId ? 'AND COALESCE(e.AGN_IN_CODIGO, s.AGN_IN_CODIGO) = :agenteId' : ''}
-    `;
+    `
 
     // Parâmetros dinâmicos
-    const binds: any = {};
-    if (agenteId) binds.agenteId = Number(agenteId);
+    const binds: any = {}
+    if (agenteId) binds.agenteId = Number(agenteId)
 
     const result = await connection.execute(sql, binds, {
-      outFormat: oracledb.OUT_FORMAT_OBJECT 
-    });
+      outFormat: oracledb.OUT_FORMAT_OBJECT
+    })
 
     // Retorna a lista de contas/agentes (ou apenas 1 se passar o agenteId na URL)
     return {
       success: true,
       data: result.rows || []
-    };
-
+    }
   } catch (error) {
-    console.error("Erro na consulta:", error);
+    console.error('Erro na consulta:', error)
     throw createError({
       statusCode: 500,
-      message: "Erro ao consultar o ERP"
-    });
+      message: 'Erro ao consultar o ERP'
+    })
   } finally {
     // SEMPRE fechar a conexão no final
     if (connection) {
-      await connection.close();
+      await connection.close()
     }
   }
-});
+})

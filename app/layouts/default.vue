@@ -1,17 +1,17 @@
 <template>
   <div class="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900">
-    
     <header class="sticky top-0 z-50 w-full bg-white/80 backdrop-blur-md border-b border-slate-200/60 shadow-sm transition-all duration-300">
       <UContainer class="flex items-center justify-between h-16 md:h-20 max-w-7xl mx-auto w-full">
-        
         <!-- Left Side: Logo -->
-        <NuxtLink to="/" class="flex items-center group">
+        <NuxtLink
+          to="/"
+          class="flex items-center group"
+        >
           <AppLogo class="h-8 md:h-12 w-auto object-contain drop-shadow-sm transition-transform duration-300 group-hover:scale-105" />
         </NuxtLink>
 
         <!-- Right Side: Actions & User Info -->
         <div class="flex items-center gap-4">
-          
           <UButton
             v-if="isAdmin"
             to="/configurar-usuarios"
@@ -24,8 +24,8 @@
           />
 
           <template v-if="user">
-            <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block"></div>
-            
+            <div class="h-6 w-px bg-slate-200 mx-1 hidden sm:block" />
+
             <div class="flex items-center gap-3 ml-2">
               <div class="hidden lg:flex flex-col text-right">
                 <span class="text-sm font-bold text-slate-800">{{ user.displayName || 'Usuário' }}</span>
@@ -38,7 +38,7 @@
                 class="ring-2 ring-white shadow-sm"
               />
             </div>
-            
+
             <UButton
               color="gray"
               variant="ghost"
@@ -50,7 +50,6 @@
             />
           </template>
         </div>
-        
       </UContainer>
     </header>
 

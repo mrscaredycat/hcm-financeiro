@@ -20,11 +20,11 @@ export default defineEventHandler(async (event) => {
 
     // 3. Executa a consulta
     const result = await connection.execute(
-      sql, 
+      sql,
       [], // Aqui entram os parâmetros da query (bind variables), se houver
       {
         // IMPORTANTE: Isso faz o Oracle retornar JSON { COLUNA: valor } ao invés de um array cru
-        outFormat: oracledb.OUT_FORMAT_OBJECT 
+        outFormat: oracledb.OUT_FORMAT_OBJECT
       }
     )
 
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
     }
   } catch (error: any) {
     console.error('[Oracle] Erro ao executar o Select:', error)
-    
+
     // Retorna o erro formatado para o Nuxt
     throw createError({
       statusCode: 500,

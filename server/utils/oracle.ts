@@ -16,7 +16,7 @@ function ensureThickMode() {
 
   try {
     const isWindows = process.platform === 'win32'
-    
+
     if (isWindows) {
       // No Windows, permite usar o caminho configurado no .env (ex: C:\oracle) ou tenta o PATH nativo
       const winLibDir = process.env.ORACLE_LIB_DIR_WIN
@@ -33,7 +33,7 @@ function ensureThickMode() {
       oracledb.initOracleClient({ libDir })
       console.log(`[Oracle] Modo thick ativado. Instant Client: ${libDir}`)
     }
-    
+
     thickInitialized = true
   } catch (err) {
     console.warn(`[Oracle] Erro ao iniciar Oracle Client. Continuando em modo Thin (pode falhar com NJS-116)...`, err)
@@ -67,4 +67,3 @@ export async function getMegaConnection() {
     throw err
   }
 }
-
