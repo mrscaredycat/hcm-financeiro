@@ -311,6 +311,7 @@
                 <thead>
                   <tr class="border-b border-slate-200 bg-slate-50/80">
                     <th class="text-left px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Período</th>
+                    <th class="text-center px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Data Fechamento</th>
                     <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Entradas</th>
                     <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Saídas</th>
                     <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Saldo do Mês</th>
@@ -325,6 +326,9 @@
                     :class="{ 'bg-slate-100/50 font-semibold': row.periodo === 'Anterior' }"
                   >
                     <td class="px-4 py-2.5 text-slate-700 capitalize">{{ row.periodo }}</td>
+                    <td class="px-4 py-2.5 text-center text-slate-500 font-mono text-xs">
+                      {{ getDataFechamento(row.periodo, anoFicha) }}
+                    </td>
                     <td class="px-4 py-2.5 text-right font-mono text-emerald-600">{{ formatCurrency(Number(row.entradas || 0)) }}</td>
                     <td class="px-4 py-2.5 text-right font-mono text-rose-600">{{ formatCurrency(Number(row.saidas || 0)) }}</td>
                     <td class="px-4 py-2.5 text-right font-mono" :class="Number(row.saldoMes) >= 0 ? 'text-blue-700' : 'text-rose-600'">
@@ -340,12 +344,12 @@
             
             <div class="flex justify-end p-4 border-t border-slate-100 bg-slate-50/30">
                <UButton
-                  color="gray"
+                  color="emerald"
                   variant="soft"
-                  icon="i-lucide-download"
-                  label="Exportar para Excel (CSV)"
+                  icon="i-lucide-file-spreadsheet"
+                  label="Exportar para Excel (.xlsx)"
                   size="sm"
-                  class="font-semibold"
+                  class="font-semibold hover:bg-emerald-100 text-emerald-700"
                   @click="exportarFichaCSV"
                 />
             </div>
@@ -432,6 +436,7 @@
 </template>
 
 <script lang="ts" setup>
+import * as XLSX from 'xlsx'
 useHead({
   title: 'Ficha Financeira de Agentes — HCM Financeiro',
   meta: [{ name: 'description', content: 'Consulta de agentes e ficha financeira mensal do Mega ERP por filial' }]
@@ -635,25 +640,49 @@ async function buscarFicha() {
 // =====================
 // Exportar CSV
 // =====================
+function getDataFechamento(periodo: string, ano: string | number): string {
+  const m = MESES.findIndex(x => x.toLowerCase() === periodo.toLowerCase())
+  if (m === 0) return `31/12/${Number(ano) - 1}`
+  if (m > 0) {
+    const dt = new Date(Number(ano), m, 0)
+    return `${String(dt.getDate()).padStart(2, '0')}/${String(m).padStart(2, '0')}/${ano}`
+  }
+  return '—'
+}
+
 function exportarFichaCSV() {
   const ag = agenteSelecionado.value
-  const headers = ['Período', 'Entradas', 'Saídas', 'Saldo do Mês', 'Saldo Atual']
-  const rows = fichaFinanceira.value.map(r => [
-    r.periodoLabel ?? r.periodo,
-    r.entradas,
-    r.saidas,
-    r.saldoMes,
-    r.saldoAtual
-  ])
-  const csvContent = [headers, ...rows].map(r => r.join(';')).join('\n')
-  const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement('a')
-  link.setAttribute('href', url)
-  link.setAttribute('download', `ficha_${ag?.Codigo ?? ag?.codigo}_${anoFicha.value}.csv`)
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
+  
+  const rowsData = fichaFinanceira.value.map(r => {
+    const periodoNome = r.periodoLabel ?? r.periodo
+    
+    return {
+      'Período': periodoNome,
+      'Data de Fechamento': getDataFechamento(periodoNome, anoFicha.value),
+      'Entradas (R$)': Number(r.entradas || 0),
+      'Saídas (R$)': Number(r.saidas || 0),
+      'Saldo do Mês (R$)': Number(r.saldoMes || 0),
+      'Saldo Acumulado (R$)': Number(r.saldoAtual || 0)
+    }
+  })
+
+  const ws = XLSX.utils.json_to_sheet(rowsData)
+  
+  const wscols = [
+    { wch: 15 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 22 }
+  ]
+  ws['!cols'] = wscols
+
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, "Ficha Financeira")
+  
+  const fileName = `Ficha_Financeira_${ag?.Codigo ?? ag?.codigo}_${anoFicha.value}.xlsx`
+  XLSX.writeFile(wb, fileName)
 }
 
 // =====================

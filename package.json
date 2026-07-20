@@ -20,7 +20,8 @@
     "nuxt-vuefire": "^1.1.2",
     "oracledb": "^7.0.0",
     "tailwindcss": "^4.3.0",
-    "vuefire": "^3.2.3"
+    "vuefire": "^3.2.3",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
