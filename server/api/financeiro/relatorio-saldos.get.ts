@@ -100,7 +100,7 @@ export default defineEventHandler(async (event) => {
            UPPER(g.AGN_ST_NOME) LIKE '%CONTA GLOBAL%' OR
            UPPER(g.AGN_ST_NOME) LIKE '%ADIANTAMENTOS%'
          )
-       GROUP BY g.AGN_IN_CODIGO, g.AGN_ST_NOME
+       GROUP BY g.AGN_IN_CODIGO, g.AGN_ST_NOME, EXTRACT(MONTH FROM m.MOV_DT_DATADOCTO)
        ORDER BY g.AGN_IN_CODIGO, mes`,
       { ano },
       { outFormat: 4002 /* oracledb.OUT_FORMAT_OBJECT */ }

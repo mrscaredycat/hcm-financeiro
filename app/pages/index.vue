@@ -1,51 +1,57 @@
 <template>
-  <UContainer class="max-w-7xl animate-in fade-in duration-500">
-    <!-- Hero / Title Section -->
-    <div class="mb-10 relative bg-white border border-slate-200/60 shadow-sm rounded-2xl p-8 overflow-hidden">
-      <!-- Subtle background decoration -->
-      <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-50 to-transparent pointer-events-none opacity-50" />
+  <div class="min-h-screen bg-slate-50/50 relative">
+    <!-- Fundo de Gradiente Premium -->
+    <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-slate-50 pointer-events-none -z-10" />
 
-      <div class="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6">
-        <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-orange-100 text-orange-700 text-xs font-bold mb-3 uppercase tracking-wider">
-            <UIcon
-              name="i-lucide-pie-chart"
-              class="w-3.5 h-3.5"
-            />
-            Módulo Financeiro
+    <UContainer class="max-w-7xl pt-8 pb-16 animate-in fade-in duration-500">
+      <!-- Hero / Title Section -->
+      <div class="mb-10 relative bg-white/70 backdrop-blur-xl border border-slate-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl p-8 lg:p-10 overflow-hidden group">
+        <!-- Subtle background decoration -->
+        <div class="absolute top-0 right-0 w-2/3 h-full bg-gradient-to-l from-orange-50/80 to-transparent pointer-events-none opacity-60 transition-opacity duration-700 group-hover:opacity-100" />
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-400/10 rounded-full blur-3xl pointer-events-none" />
+
+        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-100/80 text-orange-700 text-xs font-bold mb-4 uppercase tracking-widest ring-1 ring-orange-200/50 shadow-sm">
+              <UIcon
+                name="i-lucide-pie-chart"
+                class="w-4 h-4"
+              />
+              Módulo Financeiro
+            </div>
+            <h1 class="text-3xl md:text-5xl font-extrabold mb-3 text-slate-900 tracking-tight leading-tight">
+              Ficha Financeira de <span class="text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-400">Agentes</span>
+            </h1>
+            <p class="text-slate-500 text-base md:text-lg font-medium leading-relaxed">
+              Gerencie e consulte saldos, entradas e saídas de agentes integrados ao Mega ERP de forma rápida e segura.
+            </p>
           </div>
-          <h1 class="text-3xl md:text-4xl font-extrabold mb-2 text-slate-900 tracking-tight">
-            Ficha Financeira de Agentes
-          </h1>
-          <p class="text-slate-500 text-base md:text-lg max-w-2xl font-medium">
-            Gerencie e consulte saldos, entradas e saídas de agentes integrados ao Mega ERP de forma rápida e segura.
-          </p>
-        </div>
 
-        <!-- Action Buttons -->
-        <div class="flex items-center gap-3 w-full sm:w-auto shrink-0">
-          <UButton
-            :loading="loadingAgentes"
-            color="orange"
-            :icon="agentes.length > 0 ? 'i-lucide-refresh-cw' : 'i-lucide-search'"
-            :label="agentes.length > 0 ? 'Atualizar Dados' : 'Buscar Agentes'"
-            size="lg"
-            class="w-full sm:w-auto font-semibold shadow-md shadow-orange-500/20 hover:shadow-orange-500/30 transition-all rounded-lg"
-            @click="buscarAgentes"
-          />
-          <UButton
-            v-if="agentes.length > 0"
-            variant="soft"
-            color="gray"
-            icon="i-lucide-x"
-            label="Limpar"
-            size="lg"
-            class="w-full sm:w-auto font-semibold rounded-lg"
-            @click="limparTudo"
-          />
+          <!-- Action Buttons -->
+          <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto shrink-0 mt-4 md:mt-0">
+            <UButton
+              :loading="loadingAgentes"
+              color="orange"
+              variant="solid"
+              :icon="agentes.length > 0 ? 'i-lucide-refresh-cw' : 'i-lucide-search'"
+              :label="agentes.length > 0 ? 'Atualizar Dados' : 'Buscar Agentes'"
+              size="xl"
+              class="w-full sm:w-auto font-semibold shadow-lg shadow-orange-500/30 hover:shadow-orange-500/40 hover:-translate-y-0.5 transition-all duration-300 rounded-xl px-6"
+              @click="buscarAgentes"
+            />
+            <UButton
+              v-if="agentes.length > 0"
+              variant="soft"
+              color="gray"
+              icon="i-lucide-x"
+              label="Limpar"
+              size="xl"
+              class="w-full sm:w-auto font-semibold rounded-xl hover:bg-gray-100 transition-colors duration-300 px-6"
+              @click="limparTudo"
+            />
+          </div>
         </div>
       </div>
-    </div>
 
     <!-- ===== ERRO ===== -->
     <UAlert
@@ -74,10 +80,10 @@
     <!-- ===== CONTEÚDO PRINCIPAL (tabs) ===== -->
     <template v-if="!loadingAgentes && agentes.length > 0">
       <!-- Tabs -->
-      <div class="flex items-center gap-1 mb-4 border-b border-gray-200">
+      <div class="flex items-center gap-2 mb-6 border-b border-slate-200/80 px-2">
         <button
-          class="tab-btn"
-          :class="abaAtiva === 'agentes' ? 'tab-btn--ativa' : ''"
+          class="tab-btn hover:text-slate-900 transition-colors duration-300 pb-3 border-b-2"
+          :class="abaAtiva === 'agentes' ? 'tab-btn--ativa border-orange-500 text-orange-600' : 'border-transparent text-slate-500'"
           @click="abaAtiva = 'agentes'"
         >
           <UIcon
@@ -93,8 +99,8 @@
           />
         </button>
         <button
-          class="tab-btn"
-          :class="abaAtiva === 'ficha' ? 'tab-btn--ativa' : ''"
+          class="tab-btn hover:text-slate-900 transition-colors duration-300 pb-3 border-b-2"
+          :class="abaAtiva === 'ficha' ? 'tab-btn--ativa border-orange-500 text-orange-600' : 'border-transparent text-slate-500'"
           :disabled="!agenteSelecionado"
           @click="abaAtiva = 'ficha'"
         >
@@ -113,20 +119,32 @@
       <!-- ===== ABA: AGENTES ===== -->
       <template v-if="abaAtiva === 'agentes'">
         <!-- Barra de busca + info -->
-        <div class="flex items-center gap-3 mb-4">
+        <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
           <UInput
             v-model="buscaAgente"
             icon="i-lucide-search"
             placeholder="Buscar por nome, código, cidade..."
-            size="sm"
-            class="flex-1 max-w-sm"
+            size="lg"
+            class="flex-1 w-full max-w-md shadow-sm"
+            :ui="{ icon: { trailing: { pointer: '' } } }"
           />
-          <span class="text-xs text-gray-400 ml-auto">
-            {{ agentesFiltrados.length }} agentes encontrados
+          <UButton
+            v-if="agentesFiltrados.length > 0"
+            color="emerald"
+            variant="solid"
+            icon="i-lucide-file-spreadsheet"
+            label="Gerar Relatório Geral (Saldos)"
+            size="lg"
+            class="w-full sm:w-auto font-semibold shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/40 hover:-translate-y-0.5 transition-all duration-300 rounded-xl px-6 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400"
+            :loading="gerandoRelatorio"
+            @click="exportarRelatorioGeralSaldos"
+          />
+          <span class="text-sm font-medium text-slate-500 sm:ml-auto bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100">
+            {{ agentesFiltrados.length }} agentes
           </span>
         </div>
 
-        <UCard class="shadow-sm border-slate-200/60 rounded-xl overflow-hidden">
+        <UCard class="shadow-[0_4px_20px_rgb(0,0,0,0.03)] border-slate-200/60 rounded-2xl overflow-hidden bg-white/80 backdrop-blur-sm">
           <div class="overflow-x-auto">
             <table class="w-full text-sm">
               <thead>
@@ -433,6 +451,7 @@
       </p>
     </div>
   </UContainer>
+  </div>
 </template>
 
 <script lang="ts" setup>
@@ -567,6 +586,230 @@ function limparTudo() {
   try {
     localStorage.removeItem('hcm_agentes_cache')
   } catch (e) {}
+}
+
+// =====================
+// Relatório Geral
+// =====================
+const gerandoRelatorio = ref(false)
+
+async function exportarRelatorioGeralSaldos() {
+  gerandoRelatorio.value = true
+  try {
+    const XLSX = (await import('xlsx-js-style')).default
+    
+    // 1. Fetch data for all agents using the consolidated API (Only 1 request!)
+    const dataAnual = await $fetch<any[]>(`/api/financeiro/relatorio-saldos?ano=${anoFicha.value}`)
+    
+    if (!Array.isArray(dataAnual)) {
+      throw new Error('Erro ao buscar dados consolidados do relatório.')
+    }
+
+    // 2. Group by category
+    const getCategory = (nome: string) => {
+      const n = nome.toUpperCase()
+      if (n.includes('CCO') || n.includes('CONTA CORRENTE')) return 'CONTA CORRENTE'
+      if (n.includes('INV') || n.includes('CDB') || n.includes('RENDE') || n.includes('APL')) return 'INVESTIMENTO'
+      if (n.includes('CCR') || n.includes('CARTÃO')) return 'CARTÃO CRÉDITO'
+      if (n.includes('IMP') || n.includes('COFINS') || n.includes('CSLL') || n.includes('ICMS') || n.includes('INSS') || n.includes('IPI') || n.includes('IRRF') || n.includes('ISS') || n.includes('PIS') || n.includes('FGTS')) return 'CRÉDITO IMPOSTOS'
+      if (n.includes('FAT DIR') || n.includes('FATURAMENTO')) return 'FATURAMENTO DIRETO'
+      if (n.includes('TRA') || n.includes('TRANSITÓRIA')) return 'TRANSITÓRIA'
+      return 'OUTROS'
+    }
+
+    const categoriesOrder = ['CONTA CORRENTE', 'INVESTIMENTO', 'CARTÃO CRÉDITO', 'CRÉDITO IMPOSTOS', 'FATURAMENTO DIRETO', 'TRANSITÓRIA', 'OUTROS']
+    const grouped: Record<string, any[]> = {}
+    categoriesOrder.forEach(c => grouped[c] = [])
+
+    dataAnual.forEach(item => {
+      // Exclude if no movements and saldo anterior is 0 (optional, but requested by user layout)
+      // Actually user wanted exactly the active ones.
+      const cat = getCategory(item.ag.NomeFantasia || item.ag.NomeBanco || '')
+      if (!grouped[cat]) grouped[cat] = []
+      grouped[cat].push(item)
+    })
+
+    const wsData: any[][] = []
+
+    // Estilos Base
+    const headerStyle = {
+      font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 14 },
+      fill: { fgColor: { rgb: '1E293B' } }, // Slate 800
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: {
+        top: { style: 'thin', color: { auto: 1 } },
+        bottom: { style: 'thin', color: { auto: 1 } },
+        left: { style: 'thin', color: { auto: 1 } },
+        right: { style: 'thin', color: { auto: 1 } }
+      }
+    }
+
+    const subHeaderStyle = {
+      font: { bold: true, color: { rgb: 'FFFFFF' }, sz: 11 },
+      fill: { fgColor: { rgb: '334155' } }, // Slate 700
+      alignment: { horizontal: 'center', vertical: 'center' },
+      border: {
+        top: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        bottom: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        left: { style: 'thin', color: { rgb: 'CBD5E1' } },
+        right: { style: 'thin', color: { rgb: 'CBD5E1' } }
+      }
+    }
+
+    const categoryStyle = {
+      font: { bold: true, color: { rgb: '0F172A' }, sz: 12 },
+      fill: { fgColor: { rgb: 'E2E8F0' } }, // Slate 200
+      alignment: { horizontal: 'left', vertical: 'center' },
+      border: {
+        top: { style: 'medium', color: { rgb: '94A3B8' } },
+        bottom: { style: 'medium', color: { rgb: '94A3B8' } }
+      }
+    }
+
+    const dataStyle = {
+      font: { color: { rgb: '334155' } },
+      alignment: { horizontal: 'right', vertical: 'center' },
+      border: {
+        top: { style: 'dotted', color: { rgb: 'E2E8F0' } },
+        bottom: { style: 'dotted', color: { rgb: 'E2E8F0' } },
+        left: { style: 'thin', color: { rgb: 'E2E8F0' } },
+        right: { style: 'thin', color: { rgb: 'E2E8F0' } }
+      }
+    }
+
+    const dataNegativeStyle = {
+      ...dataStyle,
+      font: { bold: true, color: { rgb: 'EF4444' } }, // Red 500
+      fill: { fgColor: { rgb: 'FEF2F2' } } // Red 50
+    }
+
+    // Row 0: "RELATÓRIO DE SALDOS BANCÁRIOS - HCM"
+    const row0 = []
+    for (let i = 0; i <= 12; i++) {
+      row0.push({ v: i === 0 ? `RELATÓRIO DE SALDOS BANCÁRIOS - ${anoFicha.value}` : '', s: headerStyle })
+    }
+    wsData.push(row0)
+
+    // Row 1: Dates / Months
+    const titleRow = [
+      { v: 'CONTA / AGENTE', s: { ...subHeaderStyle, alignment: { horizontal: 'left' } } }
+    ]
+    const numMonths = 12
+    for (let m = 1; m <= numMonths; m++) {
+      const dateStr = getDataFechamento(MESES[m], anoFicha.value)
+      titleRow.push({
+        v: dateStr,
+        s: subHeaderStyle
+      })
+    }
+    wsData.push(titleRow)
+    wsData.push([]) // empty row 2 like in the example
+
+    // Subtotal state tracking for columns
+    const colTotals = new Array(numMonths).fill(0)
+    
+    const hoje = new Date()
+    const mesAtual = hoje.getMonth() + 1
+    const anoAtual = hoje.getFullYear()
+    const anoReq = Number(anoFicha.value)
+
+    categoriesOrder.forEach(cat => {
+      const items = grouped[cat]
+      if (items.length === 0) return
+
+      // Category Header
+      const catRow = []
+      for (let i = 0; i <= 12; i++) {
+        catRow.push({ v: i === 0 ? cat : '', s: categoryStyle })
+      }
+      wsData.push(catRow)
+
+      const catTotals = new Array(numMonths).fill(0)
+
+      items.forEach(item => {
+        const row = []
+        // Name
+        row.push({
+          v: item.ag.NomeFantasia || item.ag.NomeBanco,
+          s: dataStyle
+        })
+
+        for (let m = 1; m <= numMonths; m++) {
+          const currentSaldo = Number(item.ficha[m]?.saldoAtual || 0)
+          
+          const isFuturo = (anoReq > anoAtual) || (anoReq === anoAtual && m > mesAtual)
+
+          if (!isFuturo) {
+            catTotals[m - 1] += currentSaldo
+            colTotals[m - 1] += currentSaldo
+            row.push({
+              v: currentSaldo,
+              t: 'n',
+              z: '#,##0.00',
+              s: currentSaldo < 0 ? dataNegativeStyle : dataStyle
+            })
+          } else {
+            row.push({
+              v: '-',
+              s: dataStyle
+            })
+          }
+        }
+        wsData.push(row)
+      })
+
+      // Category Subtotal
+      const subtotalRow = [
+        {
+          v: 'SALDO DE CONTAS:',
+          s: { ...categoryStyle, alignment: { horizontal: 'right', vertical: 'center' } }
+        }
+      ]
+      catTotals.forEach((tot, idx) => {
+        const m = idx + 1
+        const isFuturo = (anoReq > anoAtual) || (anoReq === anoAtual && m > mesAtual)
+        
+        if (!isFuturo) {
+          subtotalRow.push({
+            v: tot,
+            t: 'n',
+            z: '#,##0.00',
+            s: { ...categoryStyle, alignment: { horizontal: 'right', vertical: 'center' } }
+          })
+        } else {
+          subtotalRow.push({
+            v: '-',
+            s: { ...categoryStyle, alignment: { horizontal: 'center', vertical: 'center' } }
+          })
+        }
+      })
+      wsData.push(subtotalRow)
+      wsData.push([]) // spacing between categories
+    })
+
+    // 4. Create Workbook and Export
+    const ws = XLSX.utils.aoa_to_sheet(wsData)
+    
+    // Mesclar o título principal
+    ws['!merges'] = [
+      { s: { r: 0, c: 0 }, e: { r: 0, c: 12 } }
+    ]
+
+    // Set column widths
+    const colWidths = [{ wch: 45 }]
+    for (let m = 1; m <= numMonths; m++) colWidths.push({ wch: 15 })
+    ws['!cols'] = colWidths
+
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, `Saldos ${anoFicha.value}`)
+    XLSX.writeFile(wb, `Contas_Mega_Saldos_${anoFicha.value}.xlsx`)
+
+  } catch (err) {
+    console.error('Erro ao gerar relatório', err)
+    alert('Erro ao gerar o relatório.')
+  } finally {
+    gerandoRelatorio.value = false
+  }
 }
 
 // =====================

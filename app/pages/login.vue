@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<script setup>
+<script lang="ts" setup>
 import { signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { doc, getDoc } from 'firebase/firestore'
 import { useFirebaseAuth, useFirestore } from 'vuefire'
@@ -83,13 +83,6 @@ async function fazerLoginGoogle() {
     const user = result.user
     const email = user.email?.toLowerCase() || ''
 
-    // Validação inicial: Apenas e-mails do Google
-    if (!email.endsWith('@gmail.com')) {
-      await auth.signOut()
-      erroLogin.value = 'Acesso restrito a contas @gmail.com.'
-      return
-    }
-
     // Se for o master hardcoded, passa direto
     if (email !== 'freitascaroline49@gmail.com') {
       try {
@@ -100,13 +93,13 @@ async function fazerLoginGoogle() {
         if (!docSnap.exists()) {
           // Se não encontrou o documento, desloga e barra
           await auth.signOut()
-          erroLogin.value = 'Acesso negado: Seu e-mail não foi autorizado pelo Master.'
+          erroLogin.value = `Acesso negado: O e-mail (${email}) não foi encontrado na lista de autorizados no banco de dados.`
           return
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erro ao verificar Firestore:', err)
         await auth.signOut()
-        erroLogin.value = 'Erro de verificação. O banco de dados (Firestore) pode não estar configurado.'
+        erroLogin.value = `Erro de permissão no Firestore para o e-mail (${email}). Verifique as regras de segurança.`
         return
       }
     }
