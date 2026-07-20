@@ -570,6 +570,11 @@ function limparTudo() {
 }
 
 // =====================
+// Tabs
+// =====================
+const abaAtiva = ref<'agentes' | 'ficha'>('agentes')
+
+// =====================
 // Ficha Financeira
 // =====================
 const agenteSelecionado = ref<any>(null)
