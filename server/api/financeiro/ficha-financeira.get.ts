@@ -23,7 +23,7 @@ export default defineEventHandler(async (event) => {
 
     // 1. Saldo anterior (acumulado antes do ano selecionado)
     const anteriorRes = await connection.execute(
-      `SELECT NVL(SUM(m.MOV_RE_VALORCRE - m.MOV_RE_VALORDEB), 0) AS saldo_anterior
+      `SELECT NVL(SUM(m.MOV_RE_VALORDEB - m.MOV_RE_VALORCRE), 0) AS saldo_anterior
        FROM MEGA.FIN_MOVIMENTO@HCMENG m
        WHERE m.AGN_IN_CODIGO = :banNumero
          AND m.MOV_DT_DATADOCTO < TO_DATE(:anoStr || '-01-01', 'YYYY-MM-DD')`,
@@ -37,8 +37,8 @@ export default defineEventHandler(async (event) => {
     const mensalRes = await connection.execute(
       `SELECT
          EXTRACT(MONTH FROM m.MOV_DT_DATADOCTO) AS mes,
-         NVL(SUM(m.MOV_RE_VALORCRE), 0)          AS entradas,
-         NVL(SUM(m.MOV_RE_VALORDEB), 0)          AS saidas
+         NVL(SUM(m.MOV_RE_VALORDEB), 0)          AS entradas,
+         NVL(SUM(m.MOV_RE_VALORCRE), 0)          AS saidas
        FROM MEGA.FIN_MOVIMENTO@HCMENG m
        WHERE m.AGN_IN_CODIGO = :banNumero
          AND EXTRACT(YEAR FROM m.MOV_DT_DATADOCTO) = :ano

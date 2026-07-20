@@ -21,7 +21,8 @@
     "oracledb": "^7.0.0",
     "tailwindcss": "^4.3.0",
     "vuefire": "^3.2.3",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@nuxt/eslint": "^1.15.2",
