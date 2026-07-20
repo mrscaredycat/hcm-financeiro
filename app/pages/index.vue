@@ -162,44 +162,17 @@
                   <td class="px-4 py-3 font-mono text-xs text-slate-500 font-medium">
                     {{ ag.Codigo ?? ag.codigo ?? '—' }}
                   </td>
-                  <td
-                    class="px-4 py-3 text-slate-900 font-semibold max-w-[200px] truncate"
-                    :title="ag.NomeFantasia ?? ag.nomeFantasia"
-                  >
-                    {{ ag.NomeFantasia ?? ag.nomeFantasia ?? ag.RazaoSocial ?? ag.razaoSocial ?? '—' }}
+                  <td class="px-4 py-3 text-slate-900 font-semibold max-w-[200px] truncate">
+                    {{ ag.NomeBanco ?? ag.NomeFantasia ?? '—' }}
                   </td>
-                  <td
-                    class="px-4 py-3 text-slate-600 max-w-[200px] truncate"
-                    :title="ag.RazaoSocial ?? ag.razaoSocial"
-                  >
-                    {{ ag.RazaoSocial ?? ag.razaoSocial ?? '—' }}
+                  <td class="px-4 py-3 text-slate-600">
+                    <UBadge :label="String(ag.QtdMovimentos ?? 0)" color="gray" variant="soft" />
                   </td>
-                  <td class="px-4 py-3">
-                    <UBadge
-                      :label="ag.TipoAgente ?? ag.tipoAgente ?? ag.Tipo ?? '—'"
-                      color="gray"
-                      variant="subtle"
-                      size="xs"
-                      class="font-medium"
-                    />
+                  <td class="px-4 py-3 text-emerald-600 font-mono text-xs font-medium">
+                    {{ formatCurrency(Number(ag.TotalEntradas ?? 0)) }}
                   </td>
-                  <td class="px-4 py-3 text-center">
-                    <UBadge
-                      :label="ag.FJ ?? ag.fj ?? ag.PessoaFisicaJuridica ?? '—'"
-                      :color="(ag.FJ ?? ag.fj ?? ag.PessoaFisicaJuridica) === 'J' ? 'blue' : 'emerald'"
-                      variant="soft"
-                      size="xs"
-                      class="font-bold"
-                    />
-                  </td>
-                  <td class="px-4 py-3 text-slate-500 text-xs font-medium">
-                    {{ ag.UF ?? ag.uf ?? '—' }}
-                  </td>
-                  <td
-                    class="px-4 py-3 text-slate-600 max-w-[140px] truncate"
-                    :title="getMunicipio(ag)"
-                  >
-                    {{ getMunicipio(ag) }}
+                  <td class="px-4 py-3 text-rose-600 font-mono text-xs font-medium">
+                    {{ formatCurrency(Number(ag.TotalSaidas ?? 0)) }}
                   </td>
                   <td class="px-4 py-3 text-center">
                     <UButton
@@ -255,15 +228,15 @@
                 </div>
                 <div>
                   <p class="text-xs text-slate-500 font-bold uppercase tracking-wider mb-1">
-                    Agente Selecionado
+                    Conta Bancária
                   </p>
                   <h2 class="text-xl font-extrabold text-slate-900 leading-none mb-1">
-                    {{ agenteSelecionado.NomeFantasia ?? agenteSelecionado.nomeFantasia ?? agenteSelecionado.RazaoSocial ?? '—' }}
+                    {{ agenteSelecionado.NomeBanco ?? agenteSelecionado.NomeFantasia ?? '—' }}
                   </h2>
                   <p class="text-sm text-slate-500 font-medium">
-                    Código: <strong class="text-slate-700 font-mono">{{ agenteSelecionado.Codigo ?? agenteSelecionado.codigo }}</strong>
+                    Código BACEN: <strong class="text-slate-700 font-mono">{{ agenteSelecionado.Codigo ?? agenteSelecionado.codigo }}</strong>
                     <span class="mx-1.5 text-slate-300">•</span>
-                    {{ agenteSelecionado.UF ?? agenteSelecionado.uf }} – {{ getMunicipio(agenteSelecionado) }}
+                    {{ agenteSelecionado.QtdMovimentos ?? 0 }} Movimentações Registradas
                   </p>
                 </div>
               </div>
@@ -328,81 +301,55 @@
             class="mb-4"
           />
 
-          <!-- Resumo Financeiro (Cards) -->
-          <div
+          <!-- Tabela da Ficha Financeira (Formato Senior) -->
+          <UCard
             v-if="!loadingFicha && fichaFinanceira.length > 0"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+            class="shadow-sm border-slate-200/60 rounded-xl overflow-hidden mb-6"
           >
-            <!-- Entradas do Mês -->
-            <UCard class="bg-emerald-50/50 border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 text-emerald-600 mb-2">
-                  <UIcon
-                    name="i-lucide-arrow-down-to-line"
-                    class="w-5 h-5"
-                  />
-                  <span class="text-sm font-semibold uppercase tracking-wider">Entradas do Mês</span>
-                </div>
-                <div class="text-2xl font-bold text-slate-800">
-                  {{ formatCurrency(Number(fichaFinanceira[0].ENTRADAS_MES ?? 0)) }}
-                </div>
-              </div>
-            </UCard>
-
-            <!-- Saídas do Mês -->
-            <UCard class="bg-rose-50/50 border-rose-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 text-rose-600 mb-2">
-                  <UIcon
-                    name="i-lucide-arrow-up-from-line"
-                    class="w-5 h-5"
-                  />
-                  <span class="text-sm font-semibold uppercase tracking-wider">Saídas do Mês</span>
-                </div>
-                <div class="text-2xl font-bold text-slate-800">
-                  {{ formatCurrency(Number(fichaFinanceira[0].SAIDAS_MES ?? 0)) }}
-                </div>
-              </div>
-            </UCard>
-
-            <!-- Saldo do Mês -->
-            <UCard class="bg-blue-50/50 border-blue-100 shadow-sm hover:shadow-md transition-shadow">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 text-blue-600 mb-2">
-                  <UIcon
-                    name="i-lucide-calculator"
-                    class="w-5 h-5"
-                  />
-                  <span class="text-sm font-semibold uppercase tracking-wider">Saldo do Mês</span>
-                </div>
-                <div
-                  class="text-2xl font-bold"
-                  :class="Number(fichaFinanceira[0].SALDO_MES) >= 0 ? 'text-blue-700' : 'text-rose-600'"
-                >
-                  {{ formatCurrency(Number(fichaFinanceira[0].SALDO_MES ?? 0)) }}
-                </div>
-              </div>
-            </UCard>
-
-            <!-- Saldo Atual (Histórico) -->
-            <UCard class="bg-slate-50 border-slate-200 shadow-sm hover:shadow-md transition-shadow">
-              <div class="flex flex-col gap-1">
-                <div class="flex items-center gap-2 text-slate-600 mb-2">
-                  <UIcon
-                    name="i-lucide-landmark"
-                    class="w-5 h-5"
-                  />
-                  <span class="text-sm font-semibold uppercase tracking-wider">Saldo Atual (Geral)</span>
-                </div>
-                <div
-                  class="text-2xl font-extrabold"
-                  :class="Number(fichaFinanceira[0].SALDO_ATUAL) >= 0 ? 'text-slate-900' : 'text-rose-700'"
-                >
-                  {{ formatCurrency(Number(fichaFinanceira[0].SALDO_ATUAL ?? 0)) }}
-                </div>
-              </div>
-            </UCard>
-          </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="border-b border-slate-200 bg-slate-50/80">
+                    <th class="text-left px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Período</th>
+                    <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Entradas</th>
+                    <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Saídas</th>
+                    <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Saldo do Mês</th>
+                    <th class="text-right px-4 py-3.5 font-bold text-slate-700 text-xs uppercase tracking-wider">Saldo Atual</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <tr
+                    v-for="(row, i) in fichaFinanceira"
+                    :key="i"
+                    class="hover:bg-slate-50 transition-colors duration-150"
+                    :class="{ 'bg-slate-100/50 font-semibold': row.periodo === 'Anterior' }"
+                  >
+                    <td class="px-4 py-2.5 text-slate-700 capitalize">{{ row.periodo }}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-emerald-600">{{ formatCurrency(Number(row.entradas || 0)) }}</td>
+                    <td class="px-4 py-2.5 text-right font-mono text-rose-600">{{ formatCurrency(Number(row.saidas || 0)) }}</td>
+                    <td class="px-4 py-2.5 text-right font-mono" :class="Number(row.saldoMes) >= 0 ? 'text-blue-700' : 'text-rose-600'">
+                      {{ formatCurrency(Number(row.saldoMes || 0)) }}
+                    </td>
+                    <td class="px-4 py-2.5 text-right font-mono font-bold" :class="Number(row.saldoAtual) >= 0 ? 'text-slate-900' : 'text-rose-700'">
+                      {{ formatCurrency(Number(row.saldoAtual || 0)) }}
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            
+            <div class="flex justify-end p-4 border-t border-slate-100 bg-slate-50/30">
+               <UButton
+                  color="gray"
+                  variant="soft"
+                  icon="i-lucide-download"
+                  label="Exportar para Excel (CSV)"
+                  size="sm"
+                  class="font-semibold"
+                  @click="exportarFichaCSV"
+                />
+            </div>
+          </UCard>
 
           <!-- Empty state ficha -->
           <div
@@ -518,13 +465,11 @@ const paginaAgentes = ref(1)
 const itensPorPagina = 50
 
 const colunasAgentes = [
-  { key: 'Codigo', label: 'Código' },
-  { key: 'NomeFantasia', label: 'Nome Fantasia' },
-  { key: 'RazaoSocial', label: 'Razão Social' },
-  { key: 'TipoAgente', label: 'Tipo' },
-  { key: 'FJ', label: 'F/J' },
-  { key: 'UF', label: 'UF' },
-  { key: 'municipio', label: 'Município' }
+  { key: 'Codigo', label: 'Cód. Banco' },
+  { key: 'NomeBanco', label: 'Nome do Banco' },
+  { key: 'QtdMovimentos', label: 'Movimentos' },
+  { key: 'TotalEntradas', label: 'Entradas Totais' },
+  { key: 'TotalSaidas', label: 'Saídas Totais' }
 ]
 
 function getMunicipio(ag: any): string {
@@ -577,7 +522,7 @@ async function buscarAgentes() {
   fichaCarregada.value = false
 
   try {
-    const data = await $fetch<any>(`/api/financeiro/agentes`)
+    const data = await $fetch<any>(`/api/financeiro/contas-bancarias`)
 
     if (data?.error) {
       erroAgentes.value = data.error
@@ -666,24 +611,17 @@ async function buscarFicha() {
 
   try {
     const data = await $fetch<any>(
-      `/api/financeiro/saldo?agenteId=${cod}`
+      `/api/financeiro/ficha-financeira?banNumero=${cod}&ano=${anoFicha.value}`
     )
 
-    if (data?.error || data?.success === false) {
+    if (data?.error || data?.periodos === undefined) {
       erroFicha.value = data.error ?? 'Erro ao carregar saldos.'
       loadingFicha.value = false
       fichaCarregada.value = true
       return
     }
 
-    // A nova API retorna um array em data.data
-    const rows = data?.data || []
-    if (rows.length > 0) {
-      fichaFinanceira.value = [rows[0]]
-    } else {
-      fichaFinanceira.value = []
-    }
-
+    fichaFinanceira.value = data.periodos || []
     fichaCarregada.value = true
   } catch (e: any) {
     console.error('Erro saldos financeiros:', e)
