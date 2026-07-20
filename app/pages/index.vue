@@ -114,6 +114,18 @@
             class="text-xs text-gray-400 font-normal ml-1"
           >(selecione um agente)</span>
         </button>
+        <button
+          v-if="isMaster"
+          class="tab-btn hover:text-slate-900 transition-colors duration-300 pb-3 border-b-2"
+          :class="abaAtiva === 'usuarios' ? 'tab-btn--ativa border-orange-500 text-orange-600' : 'border-transparent text-slate-500'"
+          @click="abaAtiva = 'usuarios'"
+        >
+          <UIcon
+            name="i-lucide-shield-check"
+            class="h-4 w-4"
+          />
+          Acessos (Master)
+        </button>
       </div>
 
       <!-- ===== ABA: AGENTES ===== -->
@@ -433,6 +445,78 @@
           />
         </div>
       </template>
+      <!-- ===== ABA: USUÁRIOS (MASTER) ===== -->
+      <template v-if="abaAtiva === 'usuarios'">
+        <div class="max-w-4xl mx-auto py-4">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900">Gestão de Acessos</h2>
+              <p class="text-sm text-slate-500">Controle quem pode acessar o sistema.</p>
+            </div>
+            <div class="flex gap-2">
+              <UInput
+                v-model="novoUsuarioEmail"
+                placeholder="E-mail (ex: joao@empresa.com.br)"
+                class="w-56"
+              />
+              <USelect
+                v-model="novoUsuarioRole"
+                :options="[{ label: 'Padrão', value: 'user' }, { label: 'Master', value: 'master' }]"
+                class="w-32"
+              />
+              <UButton
+                color="orange"
+                icon="i-lucide-user-plus"
+                label="Autorizar"
+                :loading="adicionandoUsuario"
+                :disabled="!novoUsuarioEmail || !novoUsuarioEmail.includes('@')"
+                @click="adicionarUsuario"
+              />
+            </div>
+          </div>
+          
+          <UCard class="shadow-sm border-slate-200/60 rounded-xl overflow-hidden">
+            <!-- Tabela nativa para evitar qualquer bug do UTable -->
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left text-slate-500">
+                <thead class="text-xs text-slate-700 uppercase bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th scope="col" class="px-6 py-3 font-semibold">E-mail Autorizado</th>
+                    <th scope="col" class="px-6 py-3 font-semibold">Nível de Acesso</th>
+                    <th scope="col" class="px-6 py-3 text-right font-semibold">Ações</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="row in listaUsuarios" :key="row.id" class="bg-white border-b hover:bg-slate-50">
+                    <td class="px-6 py-4 font-medium text-slate-900">{{ row.id }}</td>
+                    <td class="px-6 py-4">
+                      <UBadge :color="row.role === 'master' ? 'orange' : 'gray'" variant="subtle">
+                        {{ row.role === 'master' ? 'Master' : 'Padrão' }}
+                      </UBadge>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                      <UButton
+                        v-if="row.id !== usuarioAtualEmail && row.id !== 'ti@hcmengenharia.com.br'"
+                        color="red"
+                        variant="ghost"
+                        icon="i-lucide-trash-2"
+                        size="sm"
+                        title="Remover Acesso"
+                        @click="removerUsuario(row.id)"
+                      />
+                    </td>
+                  </tr>
+                  <tr v-if="listaUsuarios.length === 0">
+                    <td colspan="3" class="px-6 py-8 text-center text-slate-400">
+                      Nenhum usuário encontrado.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </UCard>
+        </div>
+      </template>
     </template>
 
     <div
@@ -456,6 +540,8 @@
 
 <script lang="ts" setup>
 import * as XLSX from 'xlsx'
+import { collection, doc, setDoc, deleteDoc, getDocs } from 'firebase/firestore'
+import { useFirestore, useFirebaseAuth } from 'vuefire'
 useHead({
   title: 'Ficha Financeira de Agentes — HCM Financeiro',
   meta: [{ name: 'description', content: 'Consulta de agentes e ficha financeira mensal do Mega ERP por filial' }]
@@ -468,7 +554,29 @@ const agentes = ref<any[]>([])
 const loadingAgentes = ref(false)
 const erroAgentes = ref('')
 
+const auth = useFirebaseAuth()
+const db = useFirestore()
+const isMaster = ref(false)
+const usuarioAtualEmail = ref('')
+
 onMounted(() => {
+  // Verifica permissões locais
+  const role = localStorage.getItem('user_role')
+  if (role === 'master') {
+    isMaster.value = true
+  }
+  
+  if (auth?.currentUser) {
+    usuarioAtualEmail.value = auth.currentUser.email || ''
+  }
+
+  // Se for master e abrir a aba de usuários, carrega a lista
+  watch(abaAtiva, (novaAba) => {
+    if (novaAba === 'usuarios' && isMaster.value) {
+      carregarUsuarios()
+    }
+  })
+
   try {
     const cached = localStorage.getItem('hcm_agentes_cache')
     if (cached) {
@@ -481,6 +589,62 @@ onMounted(() => {
     console.error('Erro ao ler cache', e)
   }
 })
+
+// =====================
+// Gestão de Usuários
+// =====================
+const listaUsuarios = ref<any[]>([])
+const novoUsuarioEmail = ref('')
+const novoUsuarioRole = ref('user')
+const adicionandoUsuario = ref(false)
+
+const colunasUsuarios = [
+  { key: 'id', label: 'E-mail Autorizado' },
+  { key: 'role', label: 'Nível de Acesso' },
+  { key: 'acoes', label: '' }
+]
+
+async function carregarUsuarios() {
+  if (!db) return
+  try {
+    const querySnapshot = await getDocs(collection(db, 'authorized_users'))
+    listaUsuarios.value = querySnapshot.docs.map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+  } catch (e) {
+    console.error('Erro ao carregar usuários:', e)
+  }
+}
+
+async function adicionarUsuario() {
+  if (!db || !novoUsuarioEmail.value) return
+  adicionandoUsuario.value = true
+  try {
+    const emailFormatado = novoUsuarioEmail.value.toLowerCase().trim()
+    await setDoc(doc(db, 'authorized_users', emailFormatado), {
+      role: novoUsuarioRole.value,
+      adicionadoEm: new Date().toISOString()
+    }, { merge: true })
+    novoUsuarioEmail.value = ''
+    await carregarUsuarios()
+  } catch (e) {
+    console.error('Erro ao adicionar usuário:', e)
+    alert('Erro ao adicionar usuário. Verifique se você tem permissão.')
+  }
+  adicionandoUsuario.value = false
+}
+
+async function removerUsuario(email: string) {
+  if (!db || !confirm(`Tem certeza que deseja remover o acesso de ${email}?`)) return
+  try {
+    await deleteDoc(doc(db, 'authorized_users', email))
+    await carregarUsuarios()
+  } catch (e) {
+    console.error('Erro ao remover usuário:', e)
+    alert('Erro ao remover usuário.')
+  }
+}
 
 const buscaAgente = ref('')
 const ordemAgenteCol = ref('Codigo')

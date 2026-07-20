@@ -83,26 +83,35 @@ async function fazerLoginGoogle() {
     const user = result.user
     const email = user.email?.toLowerCase() || ''
 
-    // Se for o master hardcoded, passa direto
-    if (email !== 'freitascaroline49@gmail.com') {
-      try {
-        // Verifica na whitelist do Firestore usando o ID do documento (que é o próprio e-mail)
-        const docRef = doc(db, 'authorized_users', email)
-        const docSnap = await getDoc(docRef)
+    let userRole = 'user'
 
-        if (!docSnap.exists()) {
-          // Se não encontrou o documento, desloga e barra
-          await auth.signOut()
-          erroLogin.value = `Acesso negado: O e-mail (${email}) não foi encontrado na lista de autorizados no banco de dados.`
-          return
-        }
-      } catch (err: any) {
-        console.error('Erro ao verificar Firestore:', err)
+    try {
+      // Verifica na whitelist do Firestore usando o ID do documento (que é o próprio e-mail)
+      const docRef = doc(db, 'authorized_users', email)
+      const docSnap = await getDoc(docRef)
+
+      if (docSnap.exists()) {
+        const data = docSnap.data()
+        // Se o banco informar que é master, salva isso
+        userRole = data.role || 'user'
+      } else if (email !== 'freitascaroline49@gmail.com' && email !== 'ti@hcmengenharia.com.br') {
+        // Se não encontrou o documento E não é um dos masters fixos, barra o acesso
         await auth.signOut()
-        erroLogin.value = `Erro de permissão no Firestore para o e-mail (${email}). Verifique as regras de segurança.`
+        erroLogin.value = `Acesso negado: O e-mail (${email}) não foi encontrado na lista de autorizados no banco de dados.`
         return
+      } else {
+        // Se for um dos masters fixos (hardcoded fallback), deixa passar como master
+        userRole = 'master'
       }
+    } catch (err: any) {
+      console.error('Erro ao verificar Firestore:', err)
+      await auth.signOut()
+      erroLogin.value = `Erro de permissão no Firestore para o e-mail (${email}). Verifique as regras de segurança.`
+      return
     }
+
+    // Salva a permissão no localStorage para ser lida pela tela inicial
+    localStorage.setItem('user_role', userRole)
 
     // Sucesso no login, redireciona
     const redirectTo = route.query.redirect || '/'
