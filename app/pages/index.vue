@@ -192,8 +192,8 @@
                   <td class="px-4 py-3 font-mono text-xs text-slate-500 font-medium">
                     {{ ag.Codigo ?? ag.codigo ?? '—' }}
                   </td>
-                  <td class="px-4 py-3 text-slate-900 font-semibold max-w-[200px] truncate">
-                    {{ ag.NomeBanco ?? ag.NomeFantasia ?? '—' }}
+                  <td class="px-4 py-3 text-slate-900 font-semibold max-w-[250px] truncate" :title="ag.NomeBanco">
+                    {{ ag.NomeFantasia ?? ag.NomeBanco ?? '—' }}
                   </td>
                   <td class="px-4 py-3 text-slate-600">
                     <UBadge :label="String(ag.QtdMovimentos ?? 0)" color="gray" variant="soft" />
@@ -657,7 +657,7 @@ const itensPorPagina = 50
 
 const colunasAgentes = [
   { key: 'Codigo', label: 'Cód. Banco' },
-  { key: 'NomeBanco', label: 'Nome do Banco' },
+  { key: 'NomeBanco', label: 'Nome / Fantasia' },
   { key: 'QtdMovimentos', label: 'Movimentos' },
   { key: 'TotalEntradas', label: 'Entradas Totais' },
   { key: 'TotalSaidas', label: 'Saídas Totais' },

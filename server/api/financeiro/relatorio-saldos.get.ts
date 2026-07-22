@@ -18,38 +18,11 @@ export default defineEventHandler(async (event) => {
        FROM MEGA.GLO_AGENTES@HCMENG g
        JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
        WHERE m.MOV_DT_DATADOCTO < TO_DATE(:anoStr || '-01-01', 'YYYY-MM-DD')
-         AND (
-           UPPER(g.AGN_ST_NOME) LIKE '%BANCO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CAIXA%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BRADESCO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ITAU%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ITAÚ%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SANTANDER%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BB %' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SICOOB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SICREDI%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%FATURAMENTO DIRETO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%TRANSITÓRIA%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%COFINS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CSLL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ICMS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%INSS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%IPI%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%IRRF%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ISS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%PIS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%FGTS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%INTER%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%PAYFY%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BRB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CEF%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CARTÃO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%RENDE FÁCIL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CDB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CONTA APLICAÇÃO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BTG%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CONTA GLOBAL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ADIANTAMENTOS%'
+         AND g.AGN_IN_CODIGO IN (
+           1001, 1098, 1099, 2534, 2535, 2548, 2558, 6247, 6248, 6249, 
+           6253, 6614, 6657, 6658, 6661, 6663, 6664, 6665, 6666, 6667, 
+           6880, 6881, 6882, 6883, 6884, 6885, 6886, 6887, 6959, 6960, 
+           6971
          )
        GROUP BY g.AGN_IN_CODIGO`,
       { anoStr },
@@ -60,6 +33,7 @@ export default defineEventHandler(async (event) => {
     const mensalRes = await connection.execute(
       `SELECT
          g.AGN_IN_CODIGO as ban_numero,
+         g.AGN_ST_FANTASIA as nome_fantasia,
          g.AGN_ST_NOME as nome_banco,
          EXTRACT(MONTH FROM m.MOV_DT_DATADOCTO) AS mes,
          NVL(SUM(m.MOV_RE_VALORDEB), 0) AS entradas,
@@ -67,40 +41,13 @@ export default defineEventHandler(async (event) => {
        FROM MEGA.GLO_AGENTES@HCMENG g
        JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
        WHERE EXTRACT(YEAR FROM m.MOV_DT_DATADOCTO) = :ano
-         AND (
-           UPPER(g.AGN_ST_NOME) LIKE '%BANCO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CAIXA%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BRADESCO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ITAU%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ITAÚ%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SANTANDER%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BB %' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SICOOB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%SICREDI%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%FATURAMENTO DIRETO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%TRANSITÓRIA%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%COFINS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CSLL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ICMS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%INSS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%IPI%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%IRRF%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ISS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%PIS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%FGTS%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%INTER%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%PAYFY%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BRB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CEF%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CARTÃO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%RENDE FÁCIL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CDB%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CONTA APLICAÇÃO%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%BTG%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%CONTA GLOBAL%' OR
-           UPPER(g.AGN_ST_NOME) LIKE '%ADIANTAMENTOS%'
+         AND g.AGN_IN_CODIGO IN (
+           1001, 1098, 1099, 2534, 2535, 2548, 2558, 6247, 6248, 6249, 
+           6253, 6614, 6657, 6658, 6661, 6663, 6664, 6665, 6666, 6667, 
+           6880, 6881, 6882, 6883, 6884, 6885, 6886, 6887, 6959, 6960, 
+           6971
          )
-       GROUP BY g.AGN_IN_CODIGO, g.AGN_ST_NOME, EXTRACT(MONTH FROM m.MOV_DT_DATADOCTO)
+       GROUP BY g.AGN_IN_CODIGO, g.AGN_ST_NOME, g.AGN_ST_FANTASIA, EXTRACT(MONTH FROM m.MOV_DT_DATADOCTO)
        ORDER BY g.AGN_IN_CODIGO, mes`,
       { ano },
       { outFormat: 4002 /* oracledb.OUT_FORMAT_OBJECT */ }
@@ -115,7 +62,7 @@ export default defineEventHandler(async (event) => {
     saldosMensais.forEach((row) => {
       const cod = row.BAN_NUMERO
       if (!agentesMap[cod]) {
-        agentesMap[cod] = { Codigo: cod, NomeBanco: row.NOME_BANCO, NomeFantasia: row.NOME_BANCO, meses: {}, saldoAnterior: 0 }
+        agentesMap[cod] = { Codigo: cod, NomeBanco: row.NOME_BANCO, NomeFantasia: row.NOME_FANTASIA || row.NOME_BANCO, meses: {}, saldoAnterior: 0 }
       }
       if (row.MES !== null) {
         agentesMap[cod].meses[row.MES] = { entradas: row.ENTRADAS, saidas: row.SAIDAS }

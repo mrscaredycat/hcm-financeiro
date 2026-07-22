@@ -19,9 +19,9 @@ async function run() {
   let connection
   try {
     connection = await oracledb.getConnection({ user, password, connectString })
-    
+
     // Check FIN_CONTACORRENTE
-    const res = await connection.execute(`SELECT column_name FROM all_tab_columns@HCMENG WHERE table_name = 'GLO_AGENTES' AND owner = 'MEGA' AND (column_name LIKE '%FANTASIA%' OR column_name LIKE '%APELIDO%' OR column_name LIKE '%NOME%')`)
+    const res = await connection.execute(`SELECT AGN_IN_CODIGO, AGN_ST_NOME, AGN_ST_FANTASIA, AGN_ST_APELIDO FROM MEGA.GLO_AGENTES@HCMENG WHERE AGN_IN_CODIGO IN (2558, 6881)`)
     console.log(res.rows)
   } catch (err) {
     console.error(err)
