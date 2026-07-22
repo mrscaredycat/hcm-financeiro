@@ -67,7 +67,8 @@ export default defineEventHandler(async () => {
         NomeFantasia: nome,
         QtdMovimentos: Number(r.TOTAL_MOV || 0),
         TotalEntradas: Number(r.TOTAL_ENTRADAS || 0),
-        TotalSaidas: Number(r.TOTAL_SAIDAS || 0)
+        TotalSaidas: Number(r.TOTAL_SAIDAS || 0),
+        SaldoAtual: Number(r.TOTAL_ENTRADAS || 0) - Number(r.TOTAL_SAIDAS || 0)
       }
     })
   } catch (error) {

@@ -204,6 +204,9 @@
                   <td class="px-4 py-3 text-rose-600 font-mono text-xs font-medium">
                     {{ formatCurrency(Number(ag.TotalSaidas ?? 0)) }}
                   </td>
+                  <td class="px-4 py-3 font-mono text-xs font-bold" :class="(Number(ag.TotalEntradas ?? 0) - Number(ag.TotalSaidas ?? 0)) >= 0 ? 'text-slate-900' : 'text-rose-700'">
+                    {{ formatCurrency(Number(ag.TotalEntradas ?? 0) - Number(ag.TotalSaidas ?? 0)) }}
+                  </td>
                   <td class="px-4 py-3 text-center">
                     <UButton
                       size="xs"
@@ -657,7 +660,8 @@ const colunasAgentes = [
   { key: 'NomeBanco', label: 'Nome do Banco' },
   { key: 'QtdMovimentos', label: 'Movimentos' },
   { key: 'TotalEntradas', label: 'Entradas Totais' },
-  { key: 'TotalSaidas', label: 'Saídas Totais' }
+  { key: 'TotalSaidas', label: 'Saídas Totais' },
+  { key: 'SaldoAtual', label: 'Saldo Atual' }
 ]
 
 function getMunicipio(ag: any): string {
