@@ -16,9 +16,10 @@ export default defineEventHandler(async (event) => {
          g.AGN_IN_CODIGO as ban_numero,
          NVL(SUM(m.MOV_RE_VALORDEB - m.MOV_RE_VALORCRE), 0) AS saldo_anterior
        FROM MEGA.GLO_AGENTES@HCMENG g
-       JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
-       WHERE m.MOV_DT_DATADOCTO < TO_DATE(:anoStr || '-01-01', 'YYYY-MM-DD')
-         AND g.AGN_IN_CODIGO IN (
+       LEFT JOIN MEGA.FIN_MOVIMENTO@HCMENG m 
+         ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
+         AND m.MOV_DT_DATADOCTO < TO_DATE(:anoStr || '-01-01', 'YYYY-MM-DD')
+       WHERE g.AGN_IN_CODIGO IN (
            1001, 1098, 1099, 2534, 2535, 2548, 2558, 6247, 6248, 6249, 
            6253, 6614, 6657, 6658, 6661, 6663, 6664, 6665, 6666, 6667, 
            6880, 6881, 6882, 6883, 6884, 6885, 6886, 6887, 6959, 6960, 
@@ -39,9 +40,10 @@ export default defineEventHandler(async (event) => {
          NVL(SUM(m.MOV_RE_VALORDEB), 0) AS entradas,
          NVL(SUM(m.MOV_RE_VALORCRE), 0) AS saidas
        FROM MEGA.GLO_AGENTES@HCMENG g
-       JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
-       WHERE EXTRACT(YEAR FROM m.MOV_DT_DATADOCTO) = :ano
-         AND g.AGN_IN_CODIGO IN (
+       LEFT JOIN MEGA.FIN_MOVIMENTO@HCMENG m 
+         ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
+         AND EXTRACT(YEAR FROM m.MOV_DT_DATADOCTO) = :ano
+       WHERE g.AGN_IN_CODIGO IN (
            1001, 1098, 1099, 2534, 2535, 2548, 2558, 6247, 6248, 6249, 
            6253, 6614, 6657, 6658, 6661, 6663, 6664, 6665, 6666, 6667, 
            6880, 6881, 6882, 6883, 6884, 6885, 6886, 6887, 6959, 6960, 

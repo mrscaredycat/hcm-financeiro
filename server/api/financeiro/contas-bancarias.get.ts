@@ -13,11 +13,11 @@ export default defineEventHandler(async () => {
          g.AGN_IN_CODIGO                 AS ban_numero,
          g.AGN_ST_FANTASIA               AS nome_fantasia,
          g.AGN_ST_NOME                   AS nome_banco,
-         COUNT(*)                        AS total_mov,
+         COUNT(m.AGN_IN_CODIGO)          AS total_mov,
          SUM(NVL(m.MOV_RE_VALORDEB, 0))  AS total_entradas,
          SUM(NVL(m.MOV_RE_VALORCRE, 0))  AS total_saidas
        FROM MEGA.GLO_AGENTES@HCMENG g
-       JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
+       LEFT JOIN MEGA.FIN_MOVIMENTO@HCMENG m ON m.AGN_IN_CODIGO = g.AGN_IN_CODIGO
        WHERE g.AGN_IN_CODIGO IN (
          1001, 1098, 1099, 2534, 2535, 2548, 2558, 6247, 6248, 6249, 
          6253, 6614, 6657, 6658, 6661, 6663, 6664, 6665, 6666, 6667, 
